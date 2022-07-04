@@ -1,0 +1,16 @@
+torch
+torchvision
+pytorch-ignite
+tensorboard
+tensorboardX
+omegaconf
+opencv-python
+skylibs
+flask
+pyinstaller
+slack_sdk
+opencv-python
+protobuf<4.21.0
+dominate>=2.3.1
+dill
+scikit-image
