@@ -5,3 +5,8 @@ results/
 *.zip
 *.pkl
 *.pyc
+datasets/skyHDR/skyangular_data/
+datasets/skyHDR/test_img/
+datasets/skyHDR/train_img/
+datasets/skyHDR/test_label/
+datasets/skyHDR/train_label/
