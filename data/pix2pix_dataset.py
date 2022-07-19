@@ -7,6 +7,8 @@ from data.base_dataset import BaseDataset, get_params, get_transform
 from PIL import Image
 import util.util as util
 import os
+import cv2 as cv
+import numpy as np
 
 os.environ["OPENCV_IO_ENABLE_OPENEXR"]="1"
 
@@ -77,7 +79,8 @@ class Pix2pixDataset(BaseDataset):
             (label_path, image_path)
             
         image = self.loadImage(image_path)
-        image = Image.fromarray(np.asarray(image))
+        image = np.asarray(image)
+        image = Image.fromarray(image)
         image = image.convert('RGB')
 
         transform_image = get_transform(self.opt, params)
