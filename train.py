@@ -10,6 +10,7 @@ import data
 from util.iter_counter import IterationCounter
 from util.visualizer import Visualizer
 from trainers.pix2pix_trainer import Pix2PixTrainer
+import torch 
 
 # parse options
 opt = TrainOptions().parse()
@@ -28,6 +29,13 @@ iter_counter = IterationCounter(opt, len(dataloader))
 
 # create tool for visualization
 visualizer = Visualizer(opt)
+
+# def force_cudnn_initialization():
+#     s = 32
+#     dev = torch.device('cuda')
+#     torch.nn.functional.conv2d(torch.zeros(s, s, s, s, device=dev), torch.zeros(s, s, s, s, device=dev))
+
+# force_cudnn_initialization()
 
 for epoch in iter_counter.training_epochs():
     iter_counter.record_epoch_start(epoch)
