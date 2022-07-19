@@ -64,8 +64,11 @@ class Pix2pixDataset(BaseDataset):
         # Label Image
         label_path = self.label_paths[index]
 
-        label = self.loadImage(label_path)
-        label = Image.fromarray(np.asarray(label))
+        if ".exr" in label_path:
+            label = self.loadImage(label_path)
+            label = Image.fromarray(np.asarray(label))
+        else:
+            label = Image.open(label_path)
         
         params = get_params(self.opt, label.size)
         transform_label = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
@@ -77,10 +80,14 @@ class Pix2pixDataset(BaseDataset):
         assert self.paths_match(label_path, image_path), \
             "The label_path %s and image_path %s don't match." % \
             (label_path, image_path)
-            
-        image = self.loadImage(image_path)
-        image = np.asarray(image)
-        image = Image.fromarray(image)
+        
+        if ".exr" in image_path:
+            image = self.loadImage(image_path)
+            image = np.asarray(image)
+            image = Image.fromarray(image)
+        else:
+            image = Image.open(image_path)
+
         image = image.convert('RGB')
 
         transform_image = get_transform(self.opt, params)
@@ -91,8 +98,13 @@ class Pix2pixDataset(BaseDataset):
             instance_tensor = 0
         else:
             instance_path = self.instance_paths[index]
-            instance = self.loadImage(instance_path)
-            instance = Image.fromarray(np.asarray(instance_path))
+
+            if ".exr" in instance_path:
+                instance = self.loadImage(instance_path)
+                instance = Image.fromarray(np.asarray(instance_path))
+            else:
+                instance = Image.open(instance_path)
+                
             if instance.mode == 'L':
                 instance_tensor = transform_label(instance) * 255
                 instance_tensor = instance_tensor.long()
