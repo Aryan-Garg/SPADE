@@ -66,12 +66,17 @@ class Pix2pixDataset(BaseDataset):
 
         if ".exr" in label_path:
             label = self.loadImage(label_path)
+            print(f"label shape: {np.asarray(label).shape}")
             label = Image.fromarray(np.asarray(label))
         else:
             label = Image.open(label_path)
-        
+            print(f"label shape: {np.asarray(label).shape}")
+            # print(np.asarray(label))
+            # print("-----------------------------\n\n")
+
         params = get_params(self.opt, label.size)
-        transform_label = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
+        print(label.size)
+        transform_label = get_transform(self.opt, params, method=Image.NEAREST, normalize=True)
         label_tensor = transform_label(label) * 255.0
         label_tensor[label_tensor == 255] = self.opt.label_nc  # 'unknown' is opt.label_nc
 
@@ -84,11 +89,16 @@ class Pix2pixDataset(BaseDataset):
         if ".exr" in image_path:
             image = self.loadImage(image_path)
             image = np.asarray(image)
-            image = Image.fromarray(image)
+            print(f"Img shape: {np.asarray(image).shape}")
+            image = Image.fromarray((image * 255).astype(np.uint8))
         else:
             image = Image.open(image_path)
+            print(f"Img shape: {np.asarray(image).shape}")
+            # print(np.asarray(image))
+            # print("-----------------------------\n\n")
 
         image = image.convert('RGB')
+        print(f"Post RGB Conversion: {np.asarray(image).shape}")
 
         transform_image = get_transform(self.opt, params)
         image_tensor = transform_image(image)
@@ -104,7 +114,7 @@ class Pix2pixDataset(BaseDataset):
                 instance = Image.fromarray(np.asarray(instance_path))
             else:
                 instance = Image.open(instance_path)
-                
+
             if instance.mode == 'L':
                 instance_tensor = transform_label(instance) * 255
                 instance_tensor = instance_tensor.long()
