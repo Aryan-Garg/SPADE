@@ -5,12 +5,10 @@ results/
 *.zip
 *.pkl
 *.pyc
-datasets/
-datasets/skyHDR/
+*.exr
 datasets/skyHDR/skyangular_data/**
 datasets/skyHDR/test_img/**
 datasets/skyHDR/train_img/**
 datasets/skyHDR/test_label/**
 datasets/skyHDR/train_label/**
 datasets/skyHDR/testMasks/**
-*.exr
