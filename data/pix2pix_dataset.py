@@ -8,6 +8,7 @@ from PIL import Image
 import util.util as util
 import os
 
+os.environ["OPENCV_IO_ENABLE_OPENEXR"]="1"
 
 class Pix2pixDataset(BaseDataset):
     @staticmethod
@@ -54,10 +55,16 @@ class Pix2pixDataset(BaseDataset):
         filename2_without_ext = os.path.splitext(os.path.basename(path2))[0]
         return filename1_without_ext == filename2_without_ext
 
+    def loadImage(self, filename, imreadFlags=None):
+        return cv.imread(filename, (cv.IMREAD_ANYCOLOR | cv.IMREAD_ANYDEPTH | cv.IMREAD_UNCHANGED))
+
     def __getitem__(self, index):
         # Label Image
         label_path = self.label_paths[index]
-        label = Image.open(label_path)
+
+        label = self.loadImage(label_path)
+        label = Image.fromarray(np.asarray(label))
+        
         params = get_params(self.opt, label.size)
         transform_label = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
         label_tensor = transform_label(label) * 255.0
@@ -68,7 +75,9 @@ class Pix2pixDataset(BaseDataset):
         assert self.paths_match(label_path, image_path), \
             "The label_path %s and image_path %s don't match." % \
             (label_path, image_path)
-        image = Image.open(image_path)
+            
+        image = self.loadImage(image_path)
+        image = Image.fromarray(np.asarray(image))
         image = image.convert('RGB')
 
         transform_image = get_transform(self.opt, params)
@@ -79,7 +88,8 @@ class Pix2pixDataset(BaseDataset):
             instance_tensor = 0
         else:
             instance_path = self.instance_paths[index]
-            instance = Image.open(instance_path)
+            instance = self.loadImage(instance_path)
+            instance = Image.fromarray(np.asarray(instance_path))
             if instance.mode == 'L':
                 instance_tensor = transform_label(instance) * 255
                 instance_tensor = instance_tensor.long()
