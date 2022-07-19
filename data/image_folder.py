@@ -13,11 +13,7 @@ import torch.utils.data as data
 from PIL import Image
 import os
 
-IMG_EXTENSIONS = [
-    '.jpg', '.JPG', '.jpeg', '.JPEG',
-    '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP', '.tiff', '.webp'
-]
-
+IMG_EXTENSIONS = ['.jpg', '.JPG', '.jpeg', '.JPEG', '.exr', '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP', '.tiff', '.webp']
 
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
@@ -64,8 +60,11 @@ def make_dataset(dir, recursive=False, read_cache=False, write_cache=False):
     return images
 
 
-def default_loader(path):
-    return Image.open(path).convert('RGB')
+def default_loader(filename, imreadFlags=None):
+    return cv.imread(filename, (cv.IMREAD_ANYCOLOR | cv.IMREAD_ANYDEPTH | cv.IMREAD_UNCHANGED))
+
+# def default_loader(path):
+#     return Image.open(path).convert('RGB')
 
 
 class ImageFolder(data.Dataset):
