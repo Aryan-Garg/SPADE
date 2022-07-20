@@ -91,7 +91,7 @@ class Pix2pixDataset(BaseDataset):
             image = self.loadImage(image_path)
             image = np.asarray(image)
             # print(f"Img shape: {np.asarray(image).shape}")
-            image = Image.fromarray(image)
+            image = Image.fromarray((image * 255).astype(np.uint8))
         else:
             image = Image.open(image_path)
             # print(f"Img shape: {np.asarray(image).shape}")
@@ -127,7 +127,7 @@ class Pix2pixDataset(BaseDataset):
                       }
         
         ### TODO: Print sizes -- DONE
-        # print(f"input_dict: {input_dict}")
+        # print(f"input_dict[image]: {input_dict['image']}")
         
         # Give subclasses a chance to modify the final output
         self.postprocess(input_dict)
