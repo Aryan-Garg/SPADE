@@ -34,7 +34,7 @@ for i, data_i in enumerate(dataloader):
         break
 
     generated = model(data_i, mode='inference')
-
+    
     img_path = data_i['path']
     for b in range(generated.shape[0]):
         print('process image... %s' % img_path[b])
