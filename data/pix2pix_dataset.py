@@ -66,17 +66,18 @@ class Pix2pixDataset(BaseDataset):
 
         if ".exr" in label_path:
             label = self.loadImage(label_path)
-            print(f"label shape: {np.asarray(label).shape}")
+            # print(f"label shape: {np.asarray(label).shape}")
             label = Image.fromarray(np.asarray(label))
         else:
             label = Image.open(label_path)
-            print(f"label shape: {np.asarray(label).shape}")
+            # print(f"label shape: {np.asarray(label).shape}")
+            ### TODO: Save img here -- DONE
+            # label.save(f'label_{np.random.randint(100)}.png')
             # print(np.asarray(label))
             # print("-----------------------------\n\n")
 
         params = get_params(self.opt, label.size)
-        print(label.size)
-        transform_label = get_transform(self.opt, params, method=Image.NEAREST, normalize=True)
+        transform_label = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
         label_tensor = transform_label(label) * 255.0
         label_tensor[label_tensor == 255] = self.opt.label_nc  # 'unknown' is opt.label_nc
 
@@ -89,16 +90,14 @@ class Pix2pixDataset(BaseDataset):
         if ".exr" in image_path:
             image = self.loadImage(image_path)
             image = np.asarray(image)
-            print(f"Img shape: {np.asarray(image).shape}")
-            image = Image.fromarray((image * 255).astype(np.uint8))
+            # print(f"Img shape: {np.asarray(image).shape}")
+            image = Image.fromarray(image)
         else:
             image = Image.open(image_path)
-            print(f"Img shape: {np.asarray(image).shape}")
-            # print(np.asarray(image))
-            # print("-----------------------------\n\n")
+            # print(f"Img shape: {np.asarray(image).shape}")
+
 
         image = image.convert('RGB')
-        print(f"Post RGB Conversion: {np.asarray(image).shape}")
 
         transform_image = get_transform(self.opt, params)
         image_tensor = transform_image(image)
@@ -126,7 +125,10 @@ class Pix2pixDataset(BaseDataset):
                       'image': image_tensor,
                       'path': image_path,
                       }
-
+        
+        ### TODO: Print sizes -- DONE
+        # print(f"input_dict: {input_dict}")
+        
         # Give subclasses a chance to modify the final output
         self.postprocess(input_dict)
 
