@@ -14,8 +14,8 @@ annotations_files = [os.path.join(os.path.realpath("."), annotations_dir, x) for
 train_labels = random.sample(annotations_files, int(partition_percentage / 100 * len(annotations_files)))
 test_labels   = [x for x in annotations_files if x not in train_labels]
 
-train_images = [x.replace("testMasks", "skyangular_data").replace("mask_", "") for x in train_labels]
-test_images  = [x.replace("testMasks", "skyangular_data").replace("mask_", "") for x in test_labels]
+train_images = [x.replace("testMasks", "skyangular_data").replace("mask_", "").replace(".png", ".exr") for x in train_labels]
+test_images  = [x.replace("testMasks", "skyangular_data").replace("mask_", "").replace(".png", ".exr") for x in test_labels]
 
 
 # print(test_labels)
