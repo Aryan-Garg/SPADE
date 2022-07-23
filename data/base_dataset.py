@@ -8,7 +8,7 @@ from PIL import Image
 import torchvision.transforms as transforms
 import numpy as np
 import random
-
+# import torchvision.transforms.functional as func_transforms
 
 class BaseDataset(data.Dataset):
     def __init__(self):
@@ -45,6 +45,7 @@ def get_params(opt, size):
 
 
 def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=True):
+    # print(opt)
     transform_list = []
     if 'resize' in opt.preprocess_mode:
         osize = [opt.load_size, opt.load_size]
@@ -60,6 +61,10 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=T
     if opt.preprocess_mode == 'none':
         base = 32
         transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base, method)))
+    
+    if opt.rand_rotate:
+        rand_rotate = np.random.randint(0,360)
+        transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rand_rotate)))
 
     if opt.preprocess_mode == 'fixed':
         w = opt.crop_size
@@ -127,3 +132,6 @@ def __flip(img, flip):
     if flip:
         return img.transpose(Image.FLIP_LEFT_RIGHT)
     return img
+
+def __rand_rotate(img, rand_rotate):
+    return img.rotate(angle=rand_rotate, resample=Resampling.NEAREST)
