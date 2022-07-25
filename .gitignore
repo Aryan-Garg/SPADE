@@ -6,7 +6,7 @@ results/
 *.pkl
 *.pyc
 *.exr
-datasets/skyHDR/skyangular_data/**
+datasets/skyHDR/**
 datasets/skyHDR/test_img/**
 datasets/skyHDR/train_img/**
 datasets/skyHDR/test_label/**
