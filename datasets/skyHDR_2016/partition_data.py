@@ -13,16 +13,16 @@ for dirPath in dirList:
 
 
 partition_percentage = 80
-annotations_dir = 'testMasks'
-img_dir = 'skyangular_data'
+annotations_dir = 'masks_2016'
+img_dir = 'skyangular_data_2016'
 annotations_files = os.listdir(annotations_dir)
 annotations_files = [os.path.join(os.path.realpath("."), annotations_dir, x) for x in annotations_files]
 
 train_labels = random.sample(annotations_files, int(partition_percentage / 100 * len(annotations_files)))
 test_labels   = [x for x in annotations_files if x not in train_labels]
 
-train_images = [x.replace("testMasks", "skyangular_data").replace("mask_", "").replace(".png", ".exr") for x in train_labels]
-test_images  = [x.replace("testMasks", "skyangular_data").replace("mask_", "").replace(".png", ".exr") for x in test_labels]
+train_images = [x.replace("masks_2016", "skyangular_data_2016").replace("mask_", "").replace(".png", ".exr") for x in train_labels]
+test_images  = [x.replace("masks_2016", "skyangular_data_2016").replace("mask_", "").replace(".png", ".exr") for x in test_labels]
 
 
 # print(test_labels)

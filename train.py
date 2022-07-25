@@ -10,6 +10,7 @@ import data
 from util.iter_counter import IterationCounter
 from util.visualizer import Visualizer
 from trainers.pix2pix_trainer import Pix2PixTrainer
+
 import torch 
 
 # parse options
@@ -80,3 +81,6 @@ for epoch in iter_counter.training_epochs():
         trainer.save(epoch)
 
 print('Training was successfully finished.')
+
+### TODO: Add Inverse log_2_tonemap then apply gamma_tonemapping on exr
+### Add here (end of pipeline)

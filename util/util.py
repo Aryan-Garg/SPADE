@@ -13,7 +13,7 @@ import os
 import argparse
 import dill as pickle
 import util.coco
-
+import cv2 as cv
 
 def save_obj(obj, name):
     with open(name, 'wb') as f:
@@ -124,6 +124,8 @@ def tensor2label(label_tensor, n_label, imtype=np.uint8, tile=False):
     result = label_numpy.astype(imtype)
     return result
 
+def saveImage(filename, image):
+    cv.imwrite(filename, image.astype(np.float32), [cv.IMWRITE_EXR_TYPE, cv.IMWRITE_EXR_TYPE_HALF])
 
 def save_image(image_numpy, image_path, create_dir=False):
     if create_dir:
@@ -132,10 +134,20 @@ def save_image(image_numpy, image_path, create_dir=False):
         image_numpy = np.expand_dims(image_numpy, axis=2)
     if image_numpy.shape[2] == 1:
         image_numpy = np.repeat(image_numpy, 3, 2)
-    image_pil = Image.fromarray(image_numpy)
+    
+    # print(image_path)
+    ### TODO: Use the code commented out below after figuring TM & i-TM out!
+    if "label" in image_path:
+        image_pil = Image.fromarray(image_numpy)
+        image_pil.save(image_path.replace('.jpg', '.png'))
+        print(f"Saved image@path: {image_path}")
+    else:
+        image_path = image_path.replace('.png', '.exr')
+        saveImage(image_path, image_numpy)
+        print(f"Saved image@path: {image_path}")
 
-    # save to png
-    image_pil.save(image_path.replace('.jpg', '.png'))
+    # image_pil = Image.fromarray(image_numpy)
+    # image_pil.save(image_path.replace('.jpg', '.png'))
 
 
 def mkdirs(paths):

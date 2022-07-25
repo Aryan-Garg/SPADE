@@ -134,4 +134,4 @@ def __flip(img, flip):
     return img
 
 def __rand_rotate(img, rand_rotate):
-    return img.rotate(angle=rand_rotate, resample=Resampling.NEAREST)
+    return img.rotate(angle=rand_rotate)

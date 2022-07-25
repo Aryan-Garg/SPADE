@@ -89,6 +89,7 @@ class Pix2pixDataset(BaseDataset):
         
         if ".exr" in image_path:
             image = self.loadImage(image_path)
+            image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
             image = np.asarray(image)
             # print(f"Img shape: {np.asarray(image).shape}")
             image = Image.fromarray((image * 255).astype(np.uint8))
@@ -96,7 +97,7 @@ class Pix2pixDataset(BaseDataset):
             image = Image.open(image_path)
             # print(f"Img shape: {np.asarray(image).shape}")
 
-
+        # extra check
         image = image.convert('RGB')
 
         transform_image = get_transform(self.opt, params)
