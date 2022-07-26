@@ -7,6 +7,7 @@ results/
 *.pyc
 *.exr
 datasets/skyHDR/**
+datasets/skyHDR_2016/**
 datasets/skyHDR/test_img/**
 datasets/skyHDR/train_img/**
 datasets/skyHDR/test_label/**
