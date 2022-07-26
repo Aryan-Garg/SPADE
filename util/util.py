@@ -61,7 +61,7 @@ def tile_images(imgs, picturesPerRow=4):
 
 # Converts a Tensor into a Numpy array
 # |imtype|: the desired type of the converted numpy array
-def tensor2im(image_tensor, imtype=np.uint8, normalize=True, tile=False):
+def tensor2im(image_tensor, imtype=np.float32, normalize=True, tile=False):
     if isinstance(image_tensor, list):
         image_numpy = []
         for i in range(len(image_tensor)):
@@ -140,11 +140,12 @@ def save_image(image_numpy, image_path, create_dir=False):
     if "label" in image_path:
         image_pil = Image.fromarray(image_numpy)
         image_pil.save(image_path.replace('.jpg', '.png'))
-        print(f"Saved image@path: {image_path}")
+        # print(f"util/util.py -> Saved image@path: {image_path}")
     else:
         image_path = image_path.replace('.png', '.exr')
         saveImage(image_path, image_numpy)
-        print(f"Saved image@path: {image_path}")
+        # print(f"util/util.py -> Saved image@path: {image_path}")
+    # print(image_numpy.shape, image_numpy.dtype)
 
     # image_pil = Image.fromarray(image_numpy)
     # image_pil.save(image_path.replace('.jpg', '.png'))
