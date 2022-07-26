@@ -6,6 +6,7 @@ results/
 *.pkl
 *.pyc
 *.exr
+datasets/clear_skies/**
 datasets/skyHDR/**
 datasets/skyHDR_2016/**
 datasets/skyHDR/test_img/**
