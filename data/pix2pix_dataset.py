@@ -2,6 +2,7 @@
 Copyright (C) 2019 NVIDIA Corporation.  All rights reserved.
 Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 """
+import sys
 
 from data.base_dataset import BaseDataset, get_params, get_transform
 from PIL import Image
@@ -10,7 +11,7 @@ import os
 import cv2 as cv
 import numpy as np
 
-os.environ["OPENCV_IO_ENABLE_OPENEXR"]="1"
+os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1" 
 
 class Pix2pixDataset(BaseDataset):
     @staticmethod
@@ -60,6 +61,9 @@ class Pix2pixDataset(BaseDataset):
     def loadImage(self, filename, imreadFlags=None):
         return cv.imread(filename, (cv.IMREAD_ANYCOLOR | cv.IMREAD_ANYDEPTH | cv.IMREAD_UNCHANGED))
 
+    def saveImage(self, filename, image):
+        cv.imwrite(filename, image.astype(np.float32), [cv.IMWRITE_EXR_TYPE, cv.IMWRITE_EXR_TYPE_HALF])
+
     def __getitem__(self, index):
         # Label Image
         label_path = self.label_paths[index]
@@ -68,6 +72,7 @@ class Pix2pixDataset(BaseDataset):
             label = self.loadImage(label_path)
             # print(f"label shape: {np.asarray(label).shape}")
             label = Image.fromarray(np.asarray(label))
+
         else:
             label = Image.open(label_path)
             # print(f"label shape: {np.asarray(label).shape}")
@@ -89,16 +94,15 @@ class Pix2pixDataset(BaseDataset):
         
         if ".exr" in image_path:
             image = self.loadImage(image_path)
-            image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+            # image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
             image = np.asarray(image)
             # print(f"Img shape: {np.asarray(image).shape}")
-            image = Image.fromarray((image * 255).astype(np.uint8))
+            image = Image.fromarray((image * 255.0).astype(np.uint8))
         else:
             image = Image.open(image_path)
+            image = image.convert('RGB')
             # print(f"Img shape: {np.asarray(image).shape}")
-
-        # extra check
-        image = image.convert('RGB')
+        
 
         transform_image = get_transform(self.opt, params)
         image_tensor = transform_image(image)
