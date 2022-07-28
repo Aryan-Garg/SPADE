@@ -9,6 +9,9 @@ from options.train_options import TrainOptions
 import data
 from util.iter_counter import IterationCounter
 from util.visualizer import Visualizer
+
+from util.postprocess import PostProcessor 
+
 from trainers.pix2pix_trainer import Pix2PixTrainer
 
 import torch 
@@ -80,7 +83,11 @@ for epoch in iter_counter.training_epochs():
         trainer.save('latest')
         trainer.save(epoch)
 
-print('Training was successfully finished.')
+print('Training was successfully finished.\n\nInverse-log2 and gamma TMing now...')
 
 ### TODO: Add Inverse log_2_tonemap then apply gamma_tonemapping on exr
 ### Add here (end of pipeline)
+post_processor_inst = PostProcessor(opt.name)
+print(f"\nNormalization Stat: {post_processor_inst.normalize_bool}")
+print(f"Inv-log2 TM Stat: {post_processor_inst.inverse_tm_bool}")
+print(f"Gamma TM Stat: {post_processor_inst.gamma_tm_bool}")

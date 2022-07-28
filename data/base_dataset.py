@@ -45,8 +45,12 @@ def get_params(opt, size):
 
 
 def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=True):
-    # print(opt)
     transform_list = []
+    
+    if opt.rand_rotate:
+        rand_rotate = np.random.randint(0,360)
+        transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rand_rotate)))
+
     if 'resize' in opt.preprocess_mode:
         osize = [opt.load_size, opt.load_size]
         transform_list.append(transforms.Resize(osize, interpolation=method))
@@ -62,13 +66,10 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=T
         base = 32
         transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base, method)))
     
-    if opt.rand_rotate:
-        rand_rotate = np.random.randint(0,360)
-        transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rand_rotate)))
-
     if opt.preprocess_mode == 'fixed':
         w = opt.crop_size
         h = round(opt.crop_size / opt.aspect_ratio)
+        # print(f"Selected h,w for resizing: {w}, {h}")
         transform_list.append(transforms.Lambda(lambda img: __resize(img, w, h, method)))
 
     if opt.isTrain and not opt.no_flip:

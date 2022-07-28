@@ -9,7 +9,7 @@
 5. ffmpeg videos to see the results!   (P1) 
 [Till Tom]  
 --- (Retrain first) ---
-6. Run test on current and new ones!   (P1)  
+~~6. Run test on current and new ones!   (P1)~~ 
 7. Swap to dataset : laval_HDRdb :: SkynetSegmented_HDRdb (deepsky)  
 ~~8. Don't use 2014 samples --> Use 2016~~  
 9. Get random images -> Validation exp. -> use radial skies from skymangler --> make the video.  
