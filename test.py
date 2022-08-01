@@ -12,6 +12,8 @@ from models.pix2pix_model import Pix2PixModel
 from util.visualizer import Visualizer
 from util import html
 
+from util.postprocess import PostProcessor 
+
 opt = TestOptions().parse()
 
 dataloader = data.create_dataloader(opt)
@@ -24,8 +26,7 @@ visualizer = Visualizer(opt)
 # create a webpage that summarizes the all results
 web_dir = os.path.join(opt.results_dir, opt.name,
                        '%s_%s' % (opt.phase, opt.which_epoch))
-webpage = html.HTML(web_dir,
-                    'Experiment = %s, Phase = %s, Epoch = %s' %
+webpage = html.HTML(web_dir,                    'Experiment = %s, Phase = %s, Epoch = %s' %
                     (opt.name, opt.phase, opt.which_epoch))
 
 # test
@@ -43,3 +44,8 @@ for i, data_i in enumerate(dataloader):
         visualizer.save_images(webpage, visuals, img_path[b:b + 1])
 
 webpage.save()
+
+post_processor_inst = PostProcessor(opt.name, "N_I_G", opt.which_epoch)
+print(f"\nNormalization Stat: {post_processor_inst.normalize_bool}")
+print(f"Inv-log2 TM Stat: {post_processor_inst.inverse_tm_bool}")
+print(f"Gamma TM Stat: {post_processor_inst.gamma_tm_bool}")
