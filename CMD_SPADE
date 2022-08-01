@@ -1,0 +1,21 @@
+python train.py --name gimme_0 --dataset_mode custom --label_dir /workspace/datasets/skyHDR/testMasks --image_dir /workspace/datasets/skyHDR/skyangular_data --label_nc 4 --gpu_ids 0,1 --batchSize 2 --tf_log --no_flip --no_instance
+
+python train.py --name skyHDR_0 --dataset_mode custom --no_instance --label_nc 4 --preprocess_mode scale_width --label_dir datasets/skyHDR/train_label --image_dir datasets/skyHDR/train_img/ --load_size 512 --aspect_ratio 1.3333 --crop_size 512 --ngf 48 --ndf 48 --batchSize 2 --niter 50 --niter_decay 50 --tf_log 
+
+
+python train.py --name skyHDR_0 --gpu_ids 0,1 --batchSize 2 --dataset_mode custom --no_instance --label_nc 4 --label_dir datasets/skyHDR/train_label --image_dir datasets/skyHDR/train_img/ --tf_log
+
+./data/custom_dataset.py --dataset_mode custom --label_dir /datasets/skyHDR/testMasks --image_dir /datasets/skyHDR/skyangular_data --label_nc 4 --no_instance
+
+python train.py --name delta_1 --gpu_ids 0,1 --batchSize 2 --dataset_mode custom --no_instance --label_nc 4 --label_dir datasets/clear_skies/clear_mask/ --image_dir datasets/clear_skies/tm_imgs/ --tf_log --no_flip --rand_rotate --niter 10  
+
+python test.py --name coco_pretrained --gpu_ids 0,1 --batchSize 2 --dataset_mode coco --dataroot datasets/coco_stuff
+
+[Curr:]
+
+python train.py --name golf_1 --gpu_ids 0,1 --batchSize 2 --dataset_mode custom --no_instance --label_nc 4 --label_dir datasets/clear_1516/masks_1516/ --image_dir datasets/clear_1516/clear_imgs/ --load_size 512 --crop_size 512 --preprocess_mode fixed --tf_log --no_flip --niter 20  --continue_train 
+
+python test.py --name golf_1 --gpu_ids 0 --no_instance --dataset_mode custom --label_nc 4 --label_dir datasets/clear_skies/test_masks/ --image_dir datasets/clear_skies/test_imgs/ --results_dir results/custom_hdrDB --load_size 512 --crop_size 512 --preprocess_mode fixed --phase test --dataroot ./datasets/clear_1516/
+
+
+tensorboard --logdir=checkpoints/golf_1/logs/ 
