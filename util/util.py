@@ -127,7 +127,7 @@ def tensor2label(label_tensor, n_label, imtype=np.uint8, tile=False):
 def saveImage(filename, image):
     cv.imwrite(filename, image.astype(np.float32), [cv.IMWRITE_EXR_TYPE, cv.IMWRITE_EXR_TYPE_HALF])
 
-def save_image(image_numpy, image_path, create_dir=False):
+def save_image(image_numpy, image_path, create_dir=False, phase = "test"):
     if create_dir:
         os.makedirs(os.path.dirname(image_path), exist_ok=True)
     if len(image_numpy.shape) == 2:
@@ -137,18 +137,24 @@ def save_image(image_numpy, image_path, create_dir=False):
     
     # print(image_path)
     ### TODO: Use the code commented out below after figuring TM & i-TM out!
+    
     if "label" in image_path:
         image_pil = Image.fromarray(image_numpy)
         image_pil.save(image_path.replace('.jpg', '.png'))
-        # print(f"util/util.py -> Saved image@path: {image_path}")
     else:
+        # print(f"util/util.py -> Saved image@path: {image_path}")
+    # elif "exr" in image_path: # HDR dataset
         image_path = image_path.replace('.png', '.exr')
+
+        # if phase == 'test':
+        #     image_numpy = cv.cvtColor(image_numpy, cv.COLOR_BGR2RGB)
+        
         saveImage(image_path, image_numpy)
         # print(f"util/util.py -> Saved image@path: {image_path}")
-    # print(image_numpy.shape, image_numpy.dtype)
-
-    # image_pil = Image.fromarray(image_numpy)
-    # image_pil.save(image_path.replace('.jpg', '.png'))
+    
+    # else: # Someone sent a jpg / png dataset
+    #     image_pil = Image.fromarray(image_numpy.astype(np.uint8))
+    #     image_pil.save(image_path.replace('.jpg', '.png'))
 
 
 def mkdirs(paths):

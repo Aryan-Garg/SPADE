@@ -6,13 +6,13 @@
 ~~2. Save images as exrs (use skymangler/core)~~  
 ~~3. Why is the skydome cropped? -- Never crop~~
 ~~4. Just random rotate and no other aug!~~ 
-5. ffmpeg videos to see the results!   (P1) 
+~~5. ffmpeg videos to see the results!   (P1) ~~
 [Till Tom]  
 --- (Retrain first) ---
 ~~6. Run test on current and new ones!   (P1)~~ 
-7. Swap to dataset : laval_HDRdb :: SkynetSegmented_HDRdb (deepsky)  
+~~7. Swap to dataset : laval_HDRdb :: SkynetSegmented_HDRdb (deepsky)~~  
 ~~8. Don't use 2014 samples --> Use 2016~~  
-9. Get random images -> Validation exp. -> use radial skies from skymangler --> make the video.  
+~~9. Get random images -> Validation exp. -> use radial skies from skymangler --> make the video.  ~~
 [Monday/Tuesday]
 --- 
 #### Thoughts:  
@@ -22,3 +22,6 @@
 ### Intel:
 delta_0 -> Has a lot of renaming and tonemapping code in /web/images (extract and keep in utils)
 ---
+
+-> Increase dataset and retrain (~ 1000) [2015 - 2016]
+-> Crop the loss (mask the non-skydome stuff)
