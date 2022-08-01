@@ -100,7 +100,7 @@ class Pix2pixDataset(BaseDataset):
             image = Image.fromarray((image * 255.0).astype(np.uint8))
         else:
             image = Image.open(image_path)
-            image = image.convert('RGB')
+            # image = image.convert('RGB')
             # print(f"Img shape: {np.asarray(image).shape}")
         
 
