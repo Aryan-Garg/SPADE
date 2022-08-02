@@ -21,8 +21,7 @@ class PostProcessor():
         # opStr -> "N_I_G", "N_I", "N"
         os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"
         self.checkpointName = checkpointName
-        self.checkpoint_number = checkpoint_number
-        ### TODO: Make this param dynamic (have to change everytime on train/test)
+        ### TODO: Make this param dynamic (have to change everytime on train/test) --- DONE
         self.out_path = out_path_str
         
         # Validation 
