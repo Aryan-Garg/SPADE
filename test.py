@@ -8,6 +8,8 @@ from collections import OrderedDict
 
 import data
 from options.test_options import TestOptions
+from options.base_options import BaseOptions
+
 from models.pix2pix_model import Pix2PixModel
 from util.visualizer import Visualizer
 from util import html
@@ -15,6 +17,7 @@ from util import html
 from util.postprocess import PostProcessor 
 
 opt = TestOptions().parse()
+opt2 = BaseOptions().parse()
 
 dataloader = data.create_dataloader(opt)
 
@@ -45,7 +48,7 @@ for i, data_i in enumerate(dataloader):
 
 webpage.save()
 
-post_processor_inst = PostProcessor(opt.name, "N_I_G", opt.which_epoch)
+post_processor_inst = PostProcessor(opt.name, "N_I_G", f"results/{opt.results_dir}/{opt2.name}/{opt.which_epoch}/images/synthesized_image/")
 print(f"\nNormalization Stat: {post_processor_inst.normalize_bool}")
 print(f"Inv-log2 TM Stat: {post_processor_inst.inverse_tm_bool}")
 print(f"Gamma TM Stat: {post_processor_inst.gamma_tm_bool}")

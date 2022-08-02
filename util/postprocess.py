@@ -17,13 +17,13 @@ class PostProcessor():
     # Control Flow Overview:
     # Normalizes -> Inv-log2 Tms -> Gamma Tms
     
-    def __init__(self, checkpointName, opStr, checkpoint_number = "test_latest"):
+    def __init__(self, checkpointName, opStr, out_path_str):
         # opStr -> "N_I_G", "N_I", "N"
         os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"
         self.checkpointName = checkpointName
         self.checkpoint_number = checkpoint_number
         ### TODO: Make this param dynamic (have to change everytime on train/test)
-        self.out_path = "results/custom_hdrDB/golf_2_continuous/test_latest/images/synthesized_image/"
+        self.out_path = out_path_str
         
         # Validation 
         self.normalize_bool = False

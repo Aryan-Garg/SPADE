@@ -6,6 +6,8 @@ Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses
 import sys
 from collections import OrderedDict
 from options.train_options import TrainOptions
+from options.base_options import BaseOptions
+
 import data
 from util.iter_counter import IterationCounter
 from util.visualizer import Visualizer
@@ -18,6 +20,7 @@ import torch
 
 # parse options
 opt = TrainOptions().parse()
+opt2 = BaseOptions.parse()
 
 # print options to help debugging
 print(' '.join(sys.argv))
@@ -87,7 +90,7 @@ print('Training was successfully finished.\n\nInverse-log2 and gamma TMing now..
 
 ### TODO: Add Inverse log_2_tonemap then apply gamma_tonemapping on exr
 ### Add here (end of pipeline)
-post_processor_inst = PostProcessor(opt.name, "N")
+post_processor_inst = PostProcessor(opt.name, "N", f"checkpoints/{opt2.name}/web/images/")
 print(f"\nNormalization Stat: {post_processor_inst.normalize_bool}")
 print(f"Inv-log2 TM Stat: {post_processor_inst.inverse_tm_bool}")
 print(f"Gamma TM Stat: {post_processor_inst.gamma_tm_bool}")
