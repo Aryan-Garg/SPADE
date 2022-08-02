@@ -23,7 +23,7 @@ class PostProcessor():
         self.checkpointName = checkpointName
         self.checkpoint_number = checkpoint_number
         ### TODO: Make this param dynamic (have to change everytime on train/test)
-        self.out_path = "results/custom_hdrDB/" +  self.checkpointName + "/test_" + self.checkpoint_number + "/images/synthesized_image/" 
+        self.out_path = "results/custom_hdrDB/golf_2_continuous/test_latest/images/synthesized_image/"
         
         # Validation 
         self.normalize_bool = False
@@ -52,7 +52,7 @@ class PostProcessor():
     def normalize(self):
         for f in os.listdir(self.out_path):
             if '.exr' in f and not "N_" in f:
-                print(f)
+                # print(f)
                 img = self.loadImage(self.out_path + f)
                 img = self.normalize_minMax(img)
                 self.saveImage(self.out_path + 'N_' + f, img)
@@ -61,7 +61,7 @@ class PostProcessor():
     def inverse_tm(self):
         for f in os.listdir(self.out_path):
             if '.exr' in f and 'N_' in f and not "itmLG2" in f:
-                print(f)
+                # print(f)
                 img = self.loadImage(self.out_path + f)
                 img = tm.tm_model.tonemap_inv(img)
                 self.saveImage(self.out_path + "itmLG2_" + f, img)
@@ -80,7 +80,7 @@ class PostProcessor():
             print(f)
 
     def control_flow(self):
-        self.reader()
+        # self.reader()
         if "N" in self.opStr:
             self.normalize()
             assert self.normalize_bool == True, "? Couldn't normalize"
