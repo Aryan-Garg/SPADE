@@ -40,7 +40,7 @@ class BaseOptions():
         parser.add_argument('--output_nc', type=int, default=3, help='# of output image channels')
        
         # Ryan custom pre-processing
-        parser.add_argument('--rand_rotate', action='store_true', help='if specified, randomly rotate images (regularization for buildingzzz)')
+        parser.add_argument('--rand_rotate', action='store_true', help='if specified, randomly rotate images & masks (regularization for buildingzzz)')
 
         # for setting inputs
         parser.add_argument('--dataroot', type=str, default='./datasets/cityscapes/')
