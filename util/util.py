@@ -61,7 +61,7 @@ def tile_images(imgs, picturesPerRow=4):
 
 # Converts a Tensor into a Numpy array
 # |imtype|: the desired type of the converted numpy array
-def tensor2im(image_tensor, imtype=np.float32, normalize=True, tile=False):
+def tensor2im(image_tensor, imtype=np.float32, normalize=False, tile=False):
     if isinstance(image_tensor, list):
         image_numpy = []
         for i in range(len(image_tensor)):
@@ -84,14 +84,23 @@ def tensor2im(image_tensor, imtype=np.float32, normalize=True, tile=False):
 
     if image_tensor.dim() == 2:
         image_tensor = image_tensor.unsqueeze(0)
+
     image_numpy = image_tensor.detach().cpu().float().numpy()
+    # print("l-89 [util.py]: Shape", image_numpy.shape, " dtype: ", image_numpy.dtype)
+
     if normalize:
         image_numpy = (np.transpose(image_numpy, (1, 2, 0)) + 1) / 2.0 * 255.0
     else:
-        image_numpy = np.transpose(image_numpy, (1, 2, 0)) * 255.0
-    image_numpy = np.clip(image_numpy, 0, 255)
+        # Removed: * 255
+        image_numpy = np.transpose(image_numpy, (1, 2, 0)) 
+
+    # HDR Upgrade: No need to clip here. 
+    # (But possibly: Inverse-Tonemap -> Gamma tonemap -> Clip)
+    # image_numpy = np.clip(image_numpy, 0, 255)
+
     if image_numpy.shape[2] == 1:
         image_numpy = image_numpy[:, :, 0]
+
     return image_numpy.astype(imtype)
 
 

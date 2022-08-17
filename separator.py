@@ -25,7 +25,7 @@ if not os.path.exists(exp_path + "synth"):
 for img_name in os.listdir(exp_path):
     if "label.png" in img_name:
         os.rename(exp_path + img_name, exp_path + "masks/" + img_name)
-    elif "N_" in img_name:
+    elif "itmLG2_" in img_name:
         if "real" in img_name:
             os.rename(exp_path + img_name, exp_path + "real/" + img_name)
         else:

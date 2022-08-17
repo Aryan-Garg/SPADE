@@ -95,9 +95,7 @@ class Pix2pixDataset(BaseDataset):
         if ".exr" in image_path:
             image = self.loadImage(image_path)
             # image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
-            image = np.asarray(image)
-            # print(f"Img shape: {np.asarray(image).shape}")
-            image = Image.fromarray((image * 255.0).astype(np.uint8))
+            # print(image_path, " -> ", image.dtype) ### float32
         else:
             image = Image.open(image_path)
             # image = image.convert('RGB')
@@ -131,7 +129,6 @@ class Pix2pixDataset(BaseDataset):
                       'path': image_path,
                       }
         
-        ### TODO: Print sizes -- DONE
         # print(f"input_dict[image]: {input_dict['image']}")
         
         # Give subclasses a chance to modify the final output

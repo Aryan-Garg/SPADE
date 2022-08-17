@@ -59,7 +59,7 @@ class PostProcessor():
 
     def inverse_tm(self):
         for f in os.listdir(self.out_path):
-            if '.exr' in f and 'N_' in f and not "itmLG2" in f:
+            if '.exr' in f and not "itmLG2" in f:
                 # print(f)
                 img = self.loadImage(self.out_path + f)
                 img = tm.tm_model.tonemap_inv(img)

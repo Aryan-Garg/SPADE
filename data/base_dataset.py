@@ -43,16 +43,23 @@ def get_params(opt, size):
     flip = random.random() > 0.5
     return {'crop_pos': (x, y), 'flip': flip}
 
-
+### TODO: Change PIL transforms to torch transforms! 
+### Upgrade to HDR capabilities
 def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=True, isLabel=True, rotation_angle=0):
     transform_list = []
-    
+    # First make a tensor; then do operations: rand_rotate -> resize(redundant)
+    if toTensor: 
+        transform_list += [transforms.ToTensor()]
+        # print(transform_list)
+
     if opt.rand_rotate:
         if isLabel:
             rand_rotate = np.random.randint(0,360)
-            transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rand_rotate)))
+            # transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rand_rotate)))
+            transform_list.append(transforms.Lambda(lambda img: transforms.functional.rotate(img, rand_rotate)))
         else:
-            transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rotation_angle)))
+            # transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rotation_angle)))
+            transform_list.append(transforms.Lambda(lambda img: transforms.functional.rotate(img, rotation_angle)))
 
     if 'resize' in opt.preprocess_mode:
         osize = [opt.load_size, opt.load_size]
@@ -69,22 +76,21 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=T
         base = 32
         transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base, method)))
     
-    if opt.preprocess_mode == 'fixed':
+    if opt.preprocess_mode == 'fixed': 
         w = opt.crop_size
         h = round(opt.crop_size / opt.aspect_ratio)
-        # print(f"Selected h,w for resizing: {w}, {h}")
-        transform_list.append(transforms.Lambda(lambda img: __resize(img, w, h, method)))
+        osize = [h, w]
+        transform_list.append(transforms.Scale(osize, interpolation=transforms.InterpolationMode.BICUBIC))   
+        # transform_list.append(transforms.Lambda(lambda img: __resize(img, w, h, method)))
 
     if opt.isTrain and not opt.no_flip:
         transform_list.append(transforms.Lambda(lambda img: __flip(img, params['flip'])))
 
-    if toTensor: 
-        transform_list += [transforms.ToTensor()]
-        # print(transform_list)
-
     if normalize:
         transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
                                                 (0.5, 0.5, 0.5))]
+
+    # print(transform_list)
     if isLabel:
         return transforms.Compose(transform_list), rand_rotate
     else:
