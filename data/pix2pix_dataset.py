@@ -73,7 +73,7 @@ class Pix2pixDataset(BaseDataset):
             # print(f"label shape: {np.asarray(label).shape}")
             label = Image.fromarray(np.asarray(label))
 
-        else:
+        else: # Goes through this... we are using png masks to conserve space!
             label = Image.open(label_path)
             # print(f"label shape: {np.asarray(label).shape}")
             ### TODO: Save img here -- DONE
@@ -82,7 +82,7 @@ class Pix2pixDataset(BaseDataset):
             # print("-----------------------------\n\n")
 
         params = get_params(self.opt, label.size)
-        transform_label = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
+        transform_label, rotation_angle = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
         label_tensor = transform_label(label) * 255.0
         label_tensor[label_tensor == 255] = self.opt.label_nc  # 'unknown' is opt.label_nc
 
@@ -104,7 +104,7 @@ class Pix2pixDataset(BaseDataset):
             # print(f"Img shape: {np.asarray(image).shape}")
         
 
-        transform_image = get_transform(self.opt, params)
+        transform_image = get_transform(self.opt, params, isLabel=False, rotation_angle=rotation_angle)
         image_tensor = transform_image(image)
 
         # if using instance maps

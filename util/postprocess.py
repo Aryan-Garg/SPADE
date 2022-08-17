@@ -41,7 +41,7 @@ class PostProcessor():
 
 
     def normalize_minMax(self, data):
-        if data.ndim > 2:
+        if data.ndim > 2: # Will go through this one --- ndim = 3
             for i in range(data.shape[-1]):
                 data[:,:,i] = (data[:,:,i] - np.min(data[:,:,i])) / (np.max(data[:,:,i]) - np.min(data[:,:,i]))
         else: 

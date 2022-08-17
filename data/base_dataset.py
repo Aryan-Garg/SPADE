@@ -44,12 +44,15 @@ def get_params(opt, size):
     return {'crop_pos': (x, y), 'flip': flip}
 
 
-def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=True):
+def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=True, isLabel=True, rotation_angle=0):
     transform_list = []
     
     if opt.rand_rotate:
-        rand_rotate = np.random.randint(0,360)
-        transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rand_rotate)))
+        if isLabel:
+            rand_rotate = np.random.randint(0,360)
+            transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rand_rotate)))
+        else:
+            transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rotation_angle)))
 
     if 'resize' in opt.preprocess_mode:
         osize = [opt.load_size, opt.load_size]
@@ -82,7 +85,10 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=T
     if normalize:
         transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
                                                 (0.5, 0.5, 0.5))]
-    return transforms.Compose(transform_list)
+    if isLabel:
+        return transforms.Compose(transform_list), rand_rotate
+    else:
+        return transforms.Compose(transform_list)
 
 
 def normalize():
