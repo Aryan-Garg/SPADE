@@ -1,3 +1,4 @@
+*.mov
 CMD_*
 *.md
 checkpoints/
