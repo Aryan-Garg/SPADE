@@ -6,6 +6,7 @@ import sys
 
 from data.base_dataset import BaseDataset, get_params, get_transform
 from PIL import Image
+import util.tonemap as tm
 import util.util as util
 import os
 import cv2 as cv
@@ -62,7 +63,7 @@ class Pix2pixDataset(BaseDataset):
         return cv.imread(filename, (cv.IMREAD_ANYCOLOR | cv.IMREAD_ANYDEPTH | cv.IMREAD_UNCHANGED))
 
     def saveImage(self, filename, image):
-        cv.imwrite(filename, image.astype(np.float32), [cv.IMWRITE_EXR_TYPE, cv.IMWRITE_EXR_TYPE_HALF])
+        cv.imwrite(filename, image.astype(np.float32), [cv.IMWRITE_EXR_TYPE, cv.IMWRITE_EXR_TYPE_HALF])  # type: ignore
 
     def __getitem__(self, index):
         # Label Image
@@ -71,8 +72,8 @@ class Pix2pixDataset(BaseDataset):
         if ".exr" in label_path:
             label = self.loadImage(label_path)
             # print(f"label shape: {np.asarray(label).shape}")
-            label = Image.fromarray(np.asarray(label))
-
+            label = Image.fromarray(np.asarray(label))  # type: ignore
+ 
         else: # Goes through this... we are using png masks to conserve space!
             label = Image.open(label_path)
             # print(f"label shape: {np.asarray(label).shape}")
@@ -94,12 +95,11 @@ class Pix2pixDataset(BaseDataset):
         
         if ".exr" in image_path:
             image = self.loadImage(image_path)
-            # image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
-            # print(image_path, " -> ", image.dtype) ### float32
+
+            # Expected images: skyangular linear space HDRs --- need to change dataset as well now.
+            image = tm.tm_model.tonemap(image)
         else:
             image = Image.open(image_path)
-            # image = image.convert('RGB')
-            # print(f"Img shape: {np.asarray(image).shape}")
         
 
         transform_image = get_transform(self.opt, params, isLabel=False, rotation_angle=rotation_angle)
@@ -113,7 +113,7 @@ class Pix2pixDataset(BaseDataset):
 
             if ".exr" in instance_path:
                 instance = self.loadImage(instance_path)
-                instance = Image.fromarray(np.asarray(instance_path))
+                instance = Image.fromarray(np.asarray(instance_path))  # type: ignore
             else:
                 instance = Image.open(instance_path)
 

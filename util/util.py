@@ -11,9 +11,10 @@ import numpy as np
 from PIL import Image
 import os
 import argparse
-import dill as pickle
+import dill as pickle # type: ignore
 import util.coco
 import cv2 as cv
+import tonemap as tm
 
 def save_obj(obj, name):
     with open(name, 'wb') as f:
@@ -52,7 +53,7 @@ def tile_images(imgs, picturesPerRow=4):
 
     # Tiling Loop (The conditionals are not necessary anymore)
     tiled = []
-    for i in range(0, imgs.shape[0], picturesPerRow):
+    for i in range(0, imgs.shape[0], picturesPerRow):                                           # type: ignore
         tiled.append(np.concatenate([imgs[j] for j in range(i, i + picturesPerRow)], axis=1))
 
     tiled = np.concatenate(tiled, axis=0)
@@ -61,7 +62,7 @@ def tile_images(imgs, picturesPerRow=4):
 
 # Converts a Tensor into a Numpy array
 # |imtype|: the desired type of the converted numpy array
-def tensor2im(image_tensor, imtype=np.float32, normalize=False, tile=False):
+def tensor2im(image_tensor, imtype=np.float32, normalize=False, tile=False):    # type: ignore
     if isinstance(image_tensor, list):
         image_numpy = []
         for i in range(len(image_tensor)):
@@ -95,7 +96,7 @@ def tensor2im(image_tensor, imtype=np.float32, normalize=False, tile=False):
         image_numpy = np.transpose(image_numpy, (1, 2, 0)) 
 
     # HDR Upgrade: No need to clip here. 
-    # (But possibly: Inverse-Tonemap -> Gamma tonemap -> Clip)
+    # (But possibly: Inverse-Tonemap (-> Gamma tonemap -> Clip))
     # image_numpy = np.clip(image_numpy, 0, 255)
 
     if image_numpy.shape[2] == 1:
@@ -105,14 +106,14 @@ def tensor2im(image_tensor, imtype=np.float32, normalize=False, tile=False):
 
 
 # Converts a one-hot tensor into a colorful label map
-def tensor2label(label_tensor, n_label, imtype=np.uint8, tile=False):
+def tensor2label(label_tensor, n_label, imtype=np.uint8, tile=False):               # type: ignore
     if label_tensor.dim() == 4:
         # transform each image in the batch
         images_np = []
         for b in range(label_tensor.size(0)):
             one_image = label_tensor[b]
             one_image_np = tensor2label(one_image, n_label, imtype)
-            images_np.append(one_image_np.reshape(1, *one_image_np.shape))
+            images_np.append(one_image_np.reshape(1, *one_image_np.shape))          # type: ignore
         images_np = np.concatenate(images_np, axis=0)
         if tile:
             images_tiled = tile_images(images_np)
@@ -122,7 +123,7 @@ def tensor2label(label_tensor, n_label, imtype=np.uint8, tile=False):
             return images_np
 
     if label_tensor.dim() == 1:
-        return np.zeros((64, 64, 3), dtype=np.uint8)
+        return np.zeros((64, 64, 3), dtype=np.uint8)                                # type: ignore
     if n_label == 0:
         return tensor2im(label_tensor, imtype)
     label_tensor = label_tensor.cpu().float()
@@ -134,7 +135,7 @@ def tensor2label(label_tensor, n_label, imtype=np.uint8, tile=False):
     return result
 
 def saveImage(filename, image):
-    cv.imwrite(filename, image.astype(np.float32), [cv.IMWRITE_EXR_TYPE, cv.IMWRITE_EXR_TYPE_HALF])
+    cv.imwrite(filename, image.astype(np.float32), [cv.IMWRITE_EXR_TYPE, cv.IMWRITE_EXR_TYPE_HALF]) # type: ignore
 
 def save_image(image_numpy, image_path, create_dir=False, phase = "test"):
     if create_dir:
@@ -144,26 +145,18 @@ def save_image(image_numpy, image_path, create_dir=False, phase = "test"):
     if image_numpy.shape[2] == 1:
         image_numpy = np.repeat(image_numpy, 3, 2)
     
-    # print(image_path)
-    ### TODO: Use the code commented out below after figuring TM & i-TM out!
     
     if "label" in image_path:
         image_pil = Image.fromarray(image_numpy)
         image_pil.save(image_path.replace('.jpg', '.png'))
     else:
-        # print(f"util/util.py -> Saved image@path: {image_path}")
-    # elif "exr" in image_path: # HDR dataset
         image_path = image_path.replace('.png', '.exr')
 
         # if phase == 'test':
         #     image_numpy = cv.cvtColor(image_numpy, cv.COLOR_BGR2RGB)
-        
+
+        image_numpy = tm.tm_model.tonemap_inv(image_numpy)
         saveImage(image_path, image_numpy)
-        # print(f"util/util.py -> Saved image@path: {image_path}")
-    
-    # else: # Someone sent a jpg / png dataset
-    #     image_pil = Image.fromarray(image_numpy.astype(np.uint8))
-    #     image_pil.save(image_path.replace('.jpg', '.png'))
 
 
 def mkdirs(paths):
@@ -254,17 +247,17 @@ def labelcolormap(N):
                          (180, 165, 180), (150, 100, 100), (150, 120, 90), (153, 153, 153), (153, 153, 153), (250, 170, 30), (220, 220, 0),
                          (107, 142, 35), (152, 251, 152), (70, 130, 180), (220, 20, 60), (255, 0, 0), (0, 0, 142), (0, 0, 70),
                          (0, 60, 100), (0, 0, 90), (0, 0, 110), (0, 80, 100), (0, 0, 230), (119, 11, 32), (0, 0, 142)],
-                        dtype=np.uint8)
+                        dtype=np.uint8) # type: ignore
     else:
-        cmap = np.zeros((N, 3), dtype=np.uint8)
+        cmap = np.zeros((N, 3), dtype=np.uint8)                 # type: ignore
         for i in range(N):
             r, g, b = 0, 0, 0
             id = i + 1  # let's give 0 a color
             for j in range(7):
                 str_id = uint82bin(id)
-                r = r ^ (np.uint8(str_id[-1]) << (7 - j))
-                g = g ^ (np.uint8(str_id[-2]) << (7 - j))
-                b = b ^ (np.uint8(str_id[-3]) << (7 - j))
+                r = r ^ (np.uint8(str_id[-1]) << (7 - j))       # type: ignore
+                g = g ^ (np.uint8(str_id[-2]) << (7 - j))       # type: ignore
+                b = b ^ (np.uint8(str_id[-3]) << (7 - j))       # type: ignore
                 id = id >> 3
             cmap[i, 0] = r
             cmap[i, 1] = g

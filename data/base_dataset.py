@@ -37,8 +37,8 @@ def get_params(opt, size):
         ls = int(opt.load_size * ls / ss)
         new_w, new_h = (ss, ls) if width_is_shorter else (ls, ss)
 
-    x = random.randint(0, np.maximum(0, new_w - opt.crop_size))
-    y = random.randint(0, np.maximum(0, new_h - opt.crop_size))
+    x = random.randint(0, np.maximum(0, new_w - opt.crop_size)) # type: ignore
+    y = random.randint(0, np.maximum(0, new_h - opt.crop_size)) # type: ignore
 
     flip = random.random() > 0.5
     return {'crop_pos': (x, y), 'flip': flip}
@@ -56,14 +56,14 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=T
         if isLabel:
             rand_rotate = np.random.randint(0,360)
             # transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rand_rotate)))
-            transform_list.append(transforms.Lambda(lambda img: transforms.functional.rotate(img, rand_rotate)))
+            transform_list.append(transforms.Lambda(lambda img: transforms.functional.rotate(img, rand_rotate))) # type: ignore
         else:
             # transform_list.append(transforms.Lambda(lambda img: __rand_rotate(img, rotation_angle)))
-            transform_list.append(transforms.Lambda(lambda img: transforms.functional.rotate(img, rotation_angle)))
+            transform_list.append(transforms.Lambda(lambda img: transforms.functional.rotate(img, rotation_angle))) # type: ignore
 
     if 'resize' in opt.preprocess_mode:
         osize = [opt.load_size, opt.load_size]
-        transform_list.append(transforms.Resize(osize, interpolation=method))
+        transform_list.append(transforms.Resize(osize, interpolation=method)) # type: ignore
     elif 'scale_width' in opt.preprocess_mode:
         transform_list.append(transforms.Lambda(lambda img: __scale_width(img, opt.load_size, method)))
     elif 'scale_shortside' in opt.preprocess_mode:
@@ -92,7 +92,7 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=T
 
     # print(transform_list)
     if isLabel:
-        return transforms.Compose(transform_list), rand_rotate
+        return transforms.Compose(transform_list), rand_rotate # type: ignore
     else:
         return transforms.Compose(transform_list)
 
