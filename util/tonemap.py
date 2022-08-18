@@ -46,7 +46,7 @@ if SANITY_CHECK:
     a = np.random.random_sample((1000,1000)) * 20000
     b = tmp.tonemap(a.copy())
     a_ = tmp.tonemap_inv(b.copy())
-    error = np.sum(np.absolute(a - np.absolute(a_)))
+    error = np.sum(np.absolute(a - np.absolute(a_)))                    # type: ignore
     print(f'ToneMap {tmp.name} error: {error}')
     assert(error < 0.00001)
 
@@ -61,7 +61,7 @@ if SANITY_CHECK:
 def tonemap_gamma(img, gamma=2.2, scale=1.0, clip=None):
     ''' Gamma Tonemap image '''
     if not (gamma == 1.0):
-        img = np.power(img, 1.0/gamma)
+        img = np.power(img, 1.0/gamma)                                  # type: ignore
     if not (scale == 1.0):
         img = img * scale
     if clip:
@@ -76,7 +76,7 @@ def tonemap_gamma_inv(img, gamma=2.2, scale=1.0):
     if not (scale == 1.0):
         img = img * (1.0/scale)
     if not (gamma == 1.0):
-        return np.power(img, gamma)
+        return np.power(img, gamma)                                 # type: ignore
     return img
 
 class ToneMap_Gamma(ToneMap):
@@ -110,7 +110,7 @@ if SANITY_CHECK:
     a = np.random.random_sample((1000,1000)) * 20000
     b = tmp.tonemap(a.copy())
     a_ = tmp.tonemap_inv(b.copy())
-    error = np.sum(np.absolute(a - np.absolute(a_)))
+    error = np.sum(np.absolute(a - np.absolute(a_)))                    # type: ignore
     print(f'ToneMap {tmp.name} error: {error}')
     assert(error < 0.00001)
 
@@ -125,7 +125,7 @@ if SANITY_CHECK:
 ''' O = log_base(I + offset)*scale '''
 ''' O = [log(I + offset) / log(base)]*scale '''
 def tonemap_log(img, base=2.0, offset=1.0, scale=1.0, clip=None):
-    img = np.log(img + offset) / np.log(base)
+    img = np.log(img + offset) / np.log(base)                           # type: ignore
     if not (scale == 1.0):
         img = img * scale
     if clip:
@@ -137,7 +137,7 @@ def tonemap_log(img, base=2.0, offset=1.0, scale=1.0, clip=None):
 def tonemap_log_inv(img, base=2.0, offset=1.0, scale=1.0):
     if not (scale == 1.0):
         img = img * (1.0/scale)
-    return np.power(base, img) - offset
+    return np.power(base, img) - offset                                # type: ignore
 
 class ToneMap_Log(ToneMap):
     def __init__(self, base=2.0, offset=1.0, scale=1.0, clip=[0,1]):
@@ -172,7 +172,7 @@ if SANITY_CHECK:
     a = np.random.random_sample((1000,1000)) * 20000
     b = tmp.tonemap(a.copy())
     a_ = tmp.tonemap_inv(b.copy())
-    error = np.sum(np.absolute(a - np.absolute(a_)))
+    error = np.sum(np.absolute(a - np.absolute(a_)))                # type: ignore
     print(f'ToneMap {tmp.name} error: {error}')
     assert(error < 0.00001)
 
@@ -184,8 +184,8 @@ if SANITY_CHECK:
 ''' O = (log(1+mu*I) / log(1+mu) ) * s '''
 ''' O = log(1+mu*I) * (1.0/ log(1+mu)) '''
 def tonemap_muLaw(img, mu=2.0, offset=1.0, scale=1.0, clip=None):
-    temp = 1.0 / np.log(offset+mu)
-    temp = np.log(offset+mu*img) * temp
+    temp = 1.0 / np.log(offset+mu)                                  # type: ignore
+    temp = np.log(offset+mu*img) * temp                             # type: ignore
     if not (scale == 1.0):
         temp = temp * scale
     if clip:
@@ -198,7 +198,7 @@ def tonemap_muLaw(img, mu=2.0, offset=1.0, scale=1.0, clip=None):
 def tonemap_muLaw_inv(img, mu=2.0, offset=1.0, scale=1.0):
     if not (scale == 1.0):
         img = img * (1.0/scale)
-    return (np.power(mu + offset, img) - offset) * (1.0/mu)
+    return (np.power(mu + offset, img) - offset) * (1.0/mu) # type: ignore
 
 class ToneMap_muLaw(ToneMap):
     def __init__(self, mu=2.0, offset=1.0, scale=1.0, clip=[0,1]):
@@ -233,7 +233,7 @@ if SANITY_CHECK:
     a = np.random.random_sample((1000,1000)) * 20000
     b = tmp.tonemap(a.copy())
     a_ = tmp.tonemap_inv(b.copy())
-    error = np.sum(np.absolute(a - np.absolute(a_)))
+    error = np.sum(np.absolute(a - np.absolute(a_))) # type: ignore
     print(f'ToneMap  {tmp.name} error: {error}')
     assert(error < 0.00001)
 

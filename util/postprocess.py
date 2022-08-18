@@ -34,7 +34,7 @@ class PostProcessor():
         self.control_flow()
 
     def saveImage(self, filename, image):
-        cv.imwrite(filename, image.astype(np.float32), [cv.IMWRITE_EXR_TYPE, cv.IMWRITE_EXR_TYPE_HALF])
+        cv.imwrite(filename, image.astype(np.float32), [cv.IMWRITE_EXR_TYPE, cv.IMWRITE_EXR_TYPE_HALF])  # type: ignore
 
     def loadImage(self, filename, imreadFlags=None):
         return cv.imread(filename, (cv.IMREAD_ANYCOLOR | cv.IMREAD_ANYDEPTH | cv.IMREAD_UNCHANGED))
