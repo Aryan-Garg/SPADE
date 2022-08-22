@@ -74,13 +74,8 @@ class Pix2pixDataset(BaseDataset):
             # print(f"label shape: {np.asarray(label).shape}")
             label = Image.fromarray(np.asarray(label))  # type: ignore
  
-        else: # Goes through this... we are using png masks to conserve space!
+        else: # Goes through this... using png masks to conserve space!
             label = Image.open(label_path)
-            # print(f"label shape: {np.asarray(label).shape}")
-            ### TODO: Save img here -- DONE
-            # label.save(f'label_{np.random.randint(100)}.png')
-            # print(np.asarray(label))
-            # print("-----------------------------\n\n")
 
         params = get_params(self.opt, label.size)
         transform_label, rotation_angle = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
@@ -96,8 +91,9 @@ class Pix2pixDataset(BaseDataset):
         if ".exr" in image_path:
             image = self.loadImage(image_path)
 
-            # Expected images: skyangular linear space HDRs --- need to change dataset as well now.
-            image = tm.tm_model.tonemap(image)
+            if not self.opt.tonemapped:
+                # Expected images: skyangular linear space HDRs --- need to change dataset as well now.
+                image = tm.tm_model.tonemap(image)
         else:
             image = Image.open(image_path)
         

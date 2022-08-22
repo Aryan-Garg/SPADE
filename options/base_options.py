@@ -39,9 +39,10 @@ class BaseOptions():
         parser.add_argument('--contain_dontcare_label', action='store_true', help='if the label map contains dontcare label (dontcare=255)')
         parser.add_argument('--output_nc', type=int, default=3, help='# of output image channels')
        
-        # Ryan custom pre-processing
+        # aryan custom pre-processing
         parser.add_argument('--rand_rotate', action='store_true', help='if specified, randomly rotate images & masks (regularization)')
-
+        parser.add_argument('--tonemapped', action='store_true', help='if specified, dataset should be tonemapped skyangular.')
+        
         # for setting inputs
         parser.add_argument('--dataroot', type=str, default='./datasets/cityscapes/')
         parser.add_argument('--dataset_mode', type=str, default='coco')
