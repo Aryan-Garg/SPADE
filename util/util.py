@@ -14,7 +14,7 @@ import argparse
 import dill as pickle # type: ignore
 import util.coco
 import cv2 as cv
-import tonemap as tm
+from . import tonemap as tm
 
 def save_obj(obj, name):
     with open(name, 'wb') as f:
