@@ -6,6 +6,7 @@ import sys
 # MV 
 import cv2 as cv
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Custom
 from . import tonemap as tm
@@ -18,7 +19,8 @@ class PostProcessor():
     # Normalizes -> Inv-log2 Tms -> Gamma Tms
     
     def __init__(self, checkpointName, opStr, out_path_str):
-        # opStr -> "N_I_G", "N_I", "N"
+        print("opStr(2nd arg) -> Normalize(N), Inverse Log2(I), Gamma(G), Histograms(H)")
+
         os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"
         self.checkpointName = checkpointName
         ### TODO: Make this param dynamic (have to change everytime on train/test) --- DONE
@@ -28,6 +30,7 @@ class PostProcessor():
         self.normalize_bool = False
         self.inverse_tm_bool = False
         self.gamma_tm_bool = False
+        self.hist_bool = False
 
         self.opStr = opStr
         # Control flow
@@ -39,6 +42,37 @@ class PostProcessor():
     def loadImage(self, filename, imreadFlags=None):
         return cv.imread(filename, (cv.IMREAD_ANYCOLOR | cv.IMREAD_ANYDEPTH | cv.IMREAD_UNCHANGED))
 
+    def plot_histograms(self):
+        # split the image into its channels
+        path = self.out_path 
+        
+        # remove all files that contain "hist" in their name from the path mentioned above
+        for f in os.listdir(path):
+            if "histogram" in f:
+                os.remove(path + f)
+
+        for f in os.listdir(path):
+            if 'itmLG2' in f and not 'gamma' in f and 'synthesized' in f:
+                img = self.loadImage(path + f)
+                if img is None:
+                    continue
+                
+                # print(f"max px-value: {np.amax(img)})")
+
+                channels = cv.split(img)
+                colors = ("b", "g", "r")
+
+                plt.figure()
+                plt.title("Color Histogram")
+                plt.xlabel("Bins")
+                plt.ylabel("# pixels")
+                # plot the histogram for each channel
+                for (chan, color) in zip(channels, colors):
+                    hist,bins = np.histogram(chan.ravel(), bins=np.r_[0, np.inf]) 
+                    plt.plot(hist, color = color)
+                plt.savefig(path + f"histogram_{f[:-4]}.png", dpi = 300)
+                plt.close()
+        self.hist_bool = True
 
     def normalize_minMax(self, data):
         if data.ndim > 2: # Will go through this one --- ndim = 3
@@ -71,7 +105,8 @@ class PostProcessor():
             if 'itmLG2' in f and not "gamma" in f:
                 img = self.loadImage(self.out_path + f)
                 img = tm.tm_display.tonemap(img)
-                self.saveImage(self.out_path + "gamma_" + f, img)
+                img = np.clip(img, 0, 255)
+                cv.imwrite(self.out_path + "gamma_" + f[:-4] + ".png", img)
         self.gamma_tm_bool = True
     
     def reader(self):
@@ -91,3 +126,7 @@ class PostProcessor():
         if "G" in self.opStr:
             self.gamma_tm()
             assert self.gamma_tm_bool == True, "? Couldn't Gamma TM"
+
+        if "H" in self.opStr:
+            self.plot_histograms()
+            assert self.hist_bool == True, "? Couldn't plot histograms"

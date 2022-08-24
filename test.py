@@ -46,7 +46,7 @@ for i, data_i in enumerate(dataloader):
 
 webpage.save()
 
-post_processor_inst = PostProcessor(opt.name, "N_I_G", f"results/{opt.results_dir}/{opt.name}/{opt.which_epoch}/images/synthesized_image/")
+post_processor_inst = PostProcessor(opt.name, "I_G", f"results/{opt.results_dir}/{opt.name}/{opt.which_epoch}/images/synthesized_image/")
 print(f"\nNormalization Stat: {post_processor_inst.normalize_bool}")
 print(f"Inv-log2 TM Stat: {post_processor_inst.inverse_tm_bool}")
 print(f"Gamma TM Stat: {post_processor_inst.gamma_tm_bool}")

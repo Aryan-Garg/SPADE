@@ -30,3 +30,5 @@ for img_name in os.listdir(exp_path):
             os.rename(exp_path + img_name, exp_path + "real/" + img_name)
         else:
             os.rename(exp_path + img_name, exp_path + "synth/" + img_name)
+    elif "histogram" in img_name:
+        os.rename(exp_path + img_name, exp_path + "synth/" + img_name)
