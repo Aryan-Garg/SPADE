@@ -26,7 +26,7 @@ class CustomDataset(Pix2pixDataset):
 
         parser.add_argument('--label_dir', type=str, required=True,
                             help='path to the directory that contains label images')
-        parser.add_argument('--image_dir', type=str, required=True,
+        parser.add_argument('--image_dir', type=str, required=True if is_train else False,
                             help='path to the directory that contains photo images')
         parser.add_argument('--instance_dir', type=str, default='',
                             help='path to the directory that contains instance maps. Leave black if not exists')
@@ -45,6 +45,7 @@ class CustomDataset(Pix2pixDataset):
         else:
             instance_paths = []
 
-        assert len(label_paths) == len(image_paths), "The #images in %s and %s do not match. Is there something wrong?"
+        if opt.phase == 'train':
+            assert len(label_paths) == len(image_paths), f"The #images in {label_paths} and {image_paths} do not match. Is there something wrong?"
 
         return label_paths, image_paths, instance_paths

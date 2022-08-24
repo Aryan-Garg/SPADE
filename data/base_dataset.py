@@ -91,7 +91,7 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=T
                                                 (0.5, 0.5, 0.5))]
 
     # print(transform_list)
-    if isLabel:
+    if isLabel and opt.rand_rotate:
         return transforms.Compose(transform_list), rand_rotate # type: ignore
     else:
         return transforms.Compose(transform_list)
