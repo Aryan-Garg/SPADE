@@ -105,7 +105,7 @@ class PostProcessor():
             if 'itmLG2' in f and not "gamma" in f:
                 img = self.loadImage(self.out_path + f)
                 img = tm.tm_display.tonemap(img)
-                img = np.clip(img, 0, 255)
+                # img = np.clip(img, 0, 255) # Already happening in tonemap_display 
                 cv.imwrite(self.out_path + "gamma_" + f[:-4] + ".png", img)
         self.gamma_tm_bool = True
     

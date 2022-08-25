@@ -78,7 +78,13 @@ class Pix2pixDataset(BaseDataset):
             label = Image.open(label_path)
 
         params = get_params(self.opt, label.size)
-        transform_label, rotation_angle = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
+
+        if self.opt.rand_rotate: # train-time: Always rotate!
+            transform_label, rotation_angle = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
+        else: # test time
+            transform_label = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
+            rotation_angle = 0
+
         label_tensor = transform_label(label) * 255.0
         label_tensor[label_tensor == 255] = self.opt.label_nc  # 'unknown' is opt.label_nc
 

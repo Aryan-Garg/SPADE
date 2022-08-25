@@ -31,6 +31,7 @@ webpage = html.HTML(web_dir,                    'Experiment = %s, Phase = %s, Ep
                     (opt.name, opt.phase, opt.which_epoch))
 
 # test
+print("Processing Masks...")
 for i, data_i in enumerate(dataloader):
     if i * opt.batchSize >= opt.how_many:
         break
@@ -38,16 +39,20 @@ for i, data_i in enumerate(dataloader):
     generated = model(data_i, mode='inference')
     
     img_path = data_i['path']
+    
     for b in range(generated.shape[0]):
-        print('process image... %s' % img_path[b])
         visuals = OrderedDict([('input_label', data_i['label'][b]),
                                ('synthesized_image', generated[b])])
         visualizer.save_images(webpage, visuals, img_path[b:b + 1])
 
 webpage.save()
+print("Done!")
 
-post_processor_inst = PostProcessor(opt.name, "I_G_H", f"results/{opt.results_dir}/{opt.name}/{opt.which_epoch}/images/synthesized_image/")
+post_processor_inst = PostProcessor(opt.name, "I", f"{opt.results_dir}/{opt.name}/test_{opt.which_epoch}/images/synthesized_image/")
 print(f"\nNormalization Stat: {post_processor_inst.normalize_bool}")
 print(f"Inv-log2 TM Stat: {post_processor_inst.inverse_tm_bool}")
 print(f"Gamma TM Stat: {post_processor_inst.gamma_tm_bool}")
 print(f"Histogram Stat: {post_processor_inst.hist_bool}")
+
+# call export_test.sh script to export video
+os.system(f"./export_test.sh {opt.results_dir}/{opt.name}/test_{opt.which_epoch}/images/ {opt.results_dir[8:]}")
