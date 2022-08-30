@@ -37,7 +37,6 @@ class TrainOptions(BaseOptions):
         parser.add_argument('--D_steps_per_G', type=int, default=1, help='number of discriminator iterations per generator iterations.')
 
         # for discriminators
-        ### Play around with these -- To overcome partial mode collapse
         parser.add_argument('--ndf', type=int, default=64, help='# of discrim filters in first conv layer')
         parser.add_argument('--lambda_feat', type=float, default=10.0, help='weight for feature matching loss')
         parser.add_argument('--lambda_vgg', type=float, default=10.0, help='weight for vgg loss')
