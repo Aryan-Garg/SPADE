@@ -3,10 +3,12 @@ Copyright (C) 2019 NVIDIA Corporation.  All rights reserved.
 Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 """
 
+from email.mime import image
 import torch
 import models.networks as networks
 import util.util as util
-
+import cv2 as cv
+import numpy as np
 
 class Pix2PixModel(torch.nn.Module):
     @staticmethod
@@ -26,9 +28,10 @@ class Pix2PixModel(torch.nn.Module):
 
         # set loss functions
         if opt.isTrain:
-            self.criterionGAN = networks.GANLoss(
-                opt.gan_mode, tensor=self.FloatTensor, opt=self.opt)
+            self.criterionGAN = networks.GANLoss(opt.gan_mode, tensor=self.FloatTensor, opt=self.opt)
+            
             self.criterionFeat = torch.nn.L1Loss()
+
             if not opt.no_vgg_loss:
                 self.criterionVGG = networks.VGGLoss(self.opt.gpu_ids)
             if opt.use_vae:
@@ -39,7 +42,7 @@ class Pix2PixModel(torch.nn.Module):
     # can't parallelize custom functions, we branch to different
     # routines based on |mode|.
     def forward(self, data, mode):
-        input_semantics, real_image = self.preprocess_input(data)
+        input_semantics, real_image = self.preprocess_input(data, mode=mode)
 
         if mode == 'generator':
             g_loss, generated = self.compute_generator_loss(
@@ -105,7 +108,24 @@ class Pix2PixModel(torch.nn.Module):
     # transforming the label map to one-hot encoding
     # |data|: dictionary of the input data
 
-    def preprocess_input(self, data):
+    def preprocess_input(self, data, mode='discriminator'):
+        if mode == 'discriminator': 
+            # Mask label and image with a circular mask(thicknes_donut: 50px) to hide buildings
+            label_masked = data['label'][0].permute(1, 2, 0).cpu().numpy()
+            image_masked = data['image'][0].permute(1, 2, 0).cpu().numpy()
+
+            h_lab = label_masked.shape[0]
+            w_lab = label_masked.shape[1]
+            
+            label_masked_2 = label_masked.copy() 
+            cv.circle(label_masked_2, (h_lab // 2, w_lab // 2), h_lab // 2, 0, 50)
+            image_masked_2 = image_masked.copy()
+            cv.circle(image_masked_2, (h_lab // 2, w_lab // 2), h_lab // 2, (0,0,0), 50)
+            
+            data['label'] = torch.unsqueeze(torch.from_numpy(label_masked_2).permute(2,0,1), dim = 0)
+            data['image'] = torch.unsqueeze(torch.from_numpy(image_masked_2).permute(2,0,1), dim = 0)
+            # print(data['label'].shape, data['image'].shape)
+
         # move to GPU and change data types
         data['label'] = data['label'].long()
         if self.use_gpu():
