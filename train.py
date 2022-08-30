@@ -4,6 +4,7 @@ Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses
 """
 
 import sys
+import os
 from collections import OrderedDict
 from options.train_options import TrainOptions
 
@@ -94,3 +95,9 @@ print(f"\nNormalization Stat: {post_processor_inst.normalize_bool}")
 print(f"Inv-log2 TM Stat: {post_processor_inst.inverse_tm_bool}")
 print(f"Gamma TM Stat: {post_processor_inst.gamma_tm_bool}")
 print(f"Histogram Plots Stat: {post_processor_inst.hist_bool}")
+
+# run separator.py file
+os.system(f"python separator.py {opt.name}")
+
+# run export_train.sh script
+os.system(f"./export_train.sh {opt.name}")
