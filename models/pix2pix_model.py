@@ -118,9 +118,9 @@ class Pix2PixModel(torch.nn.Module):
             w_lab = label_masked.shape[1]
             
             label_masked_2 = label_masked.copy() 
-            cv.circle(label_masked_2, (h_lab // 2, w_lab // 2), h_lab // 2, 0, 50)
+            cv.circle(label_masked_2, (h_lab // 2, w_lab // 2), h_lab // 2, 0, 20)
             image_masked_2 = image_masked.copy()
-            cv.circle(image_masked_2, (h_lab // 2, w_lab // 2), h_lab // 2, (0,0,0), 50)
+            cv.circle(image_masked_2, (h_lab // 2, w_lab // 2), h_lab // 2, (0,0,0), 20)
             
             data['label'] = torch.unsqueeze(torch.from_numpy(label_masked_2).permute(2,0,1), dim = 0)
             data['image'] = torch.unsqueeze(torch.from_numpy(image_masked_2).permute(2,0,1), dim = 0)
