@@ -87,10 +87,9 @@ for epoch in iter_counter.training_epochs():
 
 print('Training was successfully finished.\n\nInverse-log2 and gamma TMing now...')
 
-### TODO: Add Inverse log_2_tonemap then apply gamma_tonemapping on exr
-### Add here (end of pipeline)
 
-post_processor_inst = PostProcessor(opt.name, "H", f"checkpoints/{opt.name}/web/images/")
+# Options: N/I/G/H
+post_processor_inst = PostProcessor(opt.name, "I", f"checkpoints/{opt.name}/web/images/")
 print(f"\nNormalization Stat: {post_processor_inst.normalize_bool}")
 print(f"Inv-log2 TM Stat: {post_processor_inst.inverse_tm_bool}")
 print(f"Gamma TM Stat: {post_processor_inst.gamma_tm_bool}")
