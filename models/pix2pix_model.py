@@ -107,24 +107,25 @@ class Pix2PixModel(torch.nn.Module):
     # preprocess the input, such as moving the tensors to GPUs and
     # transforming the label map to one-hot encoding
     # |data|: dictionary of the input data
-
     def preprocess_input(self, data, mode='discriminator'):
-        if mode == 'discriminator': 
-            # Mask label and image with a circular mask(thicknes_donut: 50px) to hide buildings
-            label_masked = data['label'][0].permute(1, 2, 0).cpu().numpy()
-            image_masked = data['image'][0].permute(1, 2, 0).cpu().numpy()
+        # Donut masking
+        # if mode == 'discriminator': 
+        #     # Mask label and image with a circular mask(thicknes_donut: 50px) to hide buildings
+        #     label_masked = data['label'][0].permute(1, 2, 0).cpu().numpy()
+        #     image_masked = data['image'][0].permute(1, 2, 0).cpu().numpy()
 
-            h_lab = label_masked.shape[0]
-            w_lab = label_masked.shape[1]
+        #     h_lab = label_masked.shape[0]
+        #     w_lab = label_masked.shape[1]
             
-            label_masked_2 = label_masked.copy() 
-            cv.circle(label_masked_2, (h_lab // 2, w_lab // 2), h_lab // 2, 0, 20)
-            image_masked_2 = image_masked.copy()
-            cv.circle(image_masked_2, (h_lab // 2, w_lab // 2), h_lab // 2, (0,0,0), 20)
+        #     # Copy and apply the donut mask -> replace masked in data dict.
+        #     label_masked_2 = label_masked.copy() 
+        #     cv.circle(label_masked_2, (h_lab // 2, w_lab // 2), h_lab // 2, 0, 20)
+        #     image_masked_2 = image_masked.copy()
+        #     cv.circle(image_masked_2, (h_lab // 2, w_lab // 2), h_lab // 2, (0,0,0), 20)
             
-            data['label'] = torch.unsqueeze(torch.from_numpy(label_masked_2).permute(2,0,1), dim = 0)
-            data['image'] = torch.unsqueeze(torch.from_numpy(image_masked_2).permute(2,0,1), dim = 0)
-            # print(data['label'].shape, data['image'].shape)
+        #     data['label'] = torch.unsqueeze(torch.from_numpy(label_masked_2).permute(2,0,1), dim = 0)
+        #     data['image'] = torch.unsqueeze(torch.from_numpy(image_masked_2).permute(2,0,1), dim = 0)
+        #     # print(data['label'].shape, data['image'].shape)
 
         # move to GPU and change data types
         data['label'] = data['label'].long()
