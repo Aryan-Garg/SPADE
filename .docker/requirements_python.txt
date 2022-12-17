@@ -17,3 +17,7 @@ scikit-image
 scipy==1.2.0
 tensorflow==1.15.0
 pillow==6.1.0
+matplotlib
+lpips
+torchmetrics
+torchinfo
