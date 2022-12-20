@@ -41,7 +41,7 @@ class Visualizer():
                 log_file.write('================ Training Loss (%s) ================\n' % now)
 
     # |visuals|: dictionary of images to display or save
-    def display_current_results(self, visuals, epoch, step):
+    def display_current_results(self, visuals, epoch, step, train=False):
 
         ## convert tensors to numpy arrays
         visuals = self.convert_visuals_to_numpy(visuals)

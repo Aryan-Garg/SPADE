@@ -23,7 +23,7 @@ from trainers.pix2pix_trainer import Pix2PixTrainer
 import torch 
 import torchmetrics
 from torchmetrics.functional import structural_similarity_index_measure
-
+import fidScore.fid_score as FID
 # parse options
 opt = TrainOptions().parse()
 
@@ -88,7 +88,10 @@ for epoch in tqdm(iter_counter.training_epochs()):
             visuals = OrderedDict([('input_label', data_i['label']),
                                    ('synthesized_image', trainer.get_latest_generated()),
                                    ('real_image', data_i['image'])])
-            visualizer.display_current_results(visuals, epoch, iter_counter.total_steps_so_far)
+            # TODO:
+            # A. Either use train lag to not save train images OR 
+            # B. set flag --use_html to false                  
+            visualizer.display_current_results(visuals, epoch, iter_counter.total_steps_so_far, train=True)
 
         if iter_counter.needs_saving():
             print('saving the latest model (epoch %d, total_steps %d)' %
