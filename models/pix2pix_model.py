@@ -25,7 +25,7 @@ class Pix2PixModel(torch.nn.Module):
             else torch.ByteTensor
 
         self.netG, self.netD, self.netE = self.initialize_networks(opt)
-
+        
         # set loss functions
         if opt.isTrain:
             self.criterionGAN = networks.GANLoss(opt.gan_mode, tensor=self.FloatTensor, opt=self.opt)

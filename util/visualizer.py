@@ -9,6 +9,8 @@ import time
 from . import util
 from . import html
 import scipy.misc
+import numpy as np
+
 try:
     from StringIO import StringIO  # Python 2.7
 except ImportError:
@@ -108,6 +110,7 @@ class Visualizer():
     def plot_current_errors(self, errors, step):
         if self.tf_log:
             for tag, value in errors.items():
+                # print(f"tag: {tag} | value: {value} | value.dtype: {value.dtype}")
                 value = value.mean().float()
                 summary = self.tf.Summary(value=[self.tf.Summary.Value(tag=tag, simple_value=value)])
                 self.writer.add_summary(summary, step)

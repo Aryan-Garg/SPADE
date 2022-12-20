@@ -38,6 +38,8 @@ for i, data_i in enumerate(dataloader):
 
     generated = model(data_i, mode='inference')
     
+    # TODO: Print generated and data_i and then break!
+
     img_path = data_i['path']
     
     for b in range(generated.shape[0]):

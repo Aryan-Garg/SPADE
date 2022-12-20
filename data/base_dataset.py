@@ -80,7 +80,7 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=T
         w = opt.crop_size
         h = round(opt.crop_size / opt.aspect_ratio)
         osize = [h, w]
-        transform_list.append(transforms.Scale(osize, interpolation=transforms.InterpolationMode.BICUBIC))   
+        transform_list.append(transforms.Resize(osize, interpolation=transforms.InterpolationMode.BICUBIC))   
         # transform_list.append(transforms.Lambda(lambda img: __resize(img, w, h, method)))
 
     if opt.isTrain and not opt.no_flip:
