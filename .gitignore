@@ -9,5 +9,5 @@ results/
 *.pkl
 *.pyc
 *.exr
-datasets/**
+datasets/
 *.mp4
