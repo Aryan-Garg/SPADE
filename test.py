@@ -78,7 +78,8 @@ print(f"Testing Avg. Eval Metrics:\nSSIM: {SSIM_overall} | L1: {L1_overall}\n")
 REAL_IMG_PATH=f"datasets/full_dataset/full_gt_test/"
 FAKE_IMG_PATH=f"results/{opt.name}/test_latest/images/synthesized_image/"
 fid_score = FID.compute(path=[REAL_IMG_PATH, FAKE_IMG_PATH])
-print(f"FID Score: {fid_score}")
+with open(f"results/{opt.name}/FID_score.txt", "a") as f:
+    f.write(f"Test FID Score: {fid_score}")
 
 post_processor_inst = PostProcessor(opt.name, "I", f"{opt.results_dir}/{opt.name}/test_{opt.which_epoch}/images/synthesized_image/")
 print(f"\nNormalization Stat: {post_processor_inst.normalize_bool}")
@@ -86,5 +87,5 @@ print(f"Inv-log2 TM Stat: {post_processor_inst.inverse_tm_bool}")
 print(f"Gamma TM Stat: {post_processor_inst.gamma_tm_bool}")
 print(f"Histogram Stat: {post_processor_inst.hist_bool}")
 
-call export_test.sh script to export video
+# call export_test.sh script to export video
 os.system(f"./export_test.sh {opt.results_dir}/{opt.name}/test_{opt.which_epoch}/images/ {opt.results_dir[8:]}")
