@@ -134,7 +134,8 @@ os.system(f"python separator.py {opt.name}")
 REAL_IMG_PATH=f"checkpoints/{opt.name}/web/images/real"
 FAKE_IMG_PATH=f"checkpoints/{opt.name}/web/images/synth"
 fid_score = FID.compute(path=[REAL_IMG_PATH, FAKE_IMG_PATH])
-print(f"FID Score: {fid_score}")
+with open(f"checkpoints/{opt.name}/fid_score.txt", "a") as f:
+    f.write(f"FID Score: {fid_score}")
 
 # run export_train.sh script --- Don't need training movie
 # os.system(f"./export_train.sh {opt.name}")
