@@ -15,15 +15,16 @@ from util.iter_counter import IterationCounter
 from util.visualizer import Visualizer
 
 # Aryan's Custom Imports
-from util.postprocess import PostProcessor 
+from util.postprocess import PostProcessor
 import fidScore.fid_score as FID
 
 from trainers.pix2pix_trainer import Pix2PixTrainer
 
 import torch 
+
 import torchmetrics
 from torchmetrics.functional import structural_similarity_index_measure
-import fidScore.fid_score as FID
+
 # parse options
 opt = TrainOptions().parse()
 
