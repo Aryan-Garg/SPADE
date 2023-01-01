@@ -78,12 +78,17 @@ class Pix2pixDataset(BaseDataset):
             label = Image.open(label_path)
 
         params = get_params(self.opt, label.size)
-
-        if self.opt.rand_rotate: # train-time: Always rotate!
+        
+        # Params to transfer the same aug to image from label
+        hflipB, vflipB = False, False
+        rotation_angle = 0
+        if self.opt.rand_rotate and not self.opt.no_flip: # train-time: Always rotate & flip! (2 augs so far)
+            transform_label, rotation_angle, hflipB, vflipB = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
+        elif self.opt.rand_rotate:
             transform_label, rotation_angle = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
         else: # test time
             transform_label = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
-            rotation_angle = 0
+            
 
         label_tensor = transform_label(label) * 255.0
         label_tensor[label_tensor == 255] = self.opt.label_nc  # 'unknown' is opt.label_nc
@@ -104,7 +109,7 @@ class Pix2pixDataset(BaseDataset):
             image = Image.open(image_path)
         
 
-        transform_image = get_transform(self.opt, params, isLabel=False, rotation_angle=rotation_angle)
+        transform_image = get_transform(self.opt, params, isLabel=False, rotation_angle=rotation_angle, hflip_bool=hflipB, vflip_bool=vflipB)
         image_tensor = transform_image(image)
 
         # if using instance maps

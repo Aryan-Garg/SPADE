@@ -45,7 +45,7 @@ def get_params(opt, size):
 
 ### TODO: Change PIL transforms to torch transforms! 
 ### Upgrade to HDR capabilities
-def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=True, isLabel=True, rotation_angle=0):
+def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=True, isLabel=True, rotation_angle=0, hflip_bool=False, vflip_bool=False):
     transform_list = []
     # First make a tensor; then do operations: rand_rotate -> resize(redundant)
     if toTensor: 
@@ -83,16 +83,30 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=T
         transform_list.append(transforms.Resize(osize, interpolation=transforms.InterpolationMode.BICUBIC))   
         # transform_list.append(transforms.Lambda(lambda img: __resize(img, w, h, method)))
 
-    if opt.isTrain and not opt.no_flip: # p -> probability to flip image
-        transform_list.append(transforms.RandomHorizontalFlip(p=0.5))
-        transform_list.append(transforms.RandomVerticalFlip(p=0.5))
+    if opt.isTrain and not opt.no_flip:
+        if isLabel:
+            # Return these bools 
+            hflip = bool(random.getrandbits(1)) # just get a fast random boolean val
+            vflip = bool(random.getrandbits(1))
+            if hflip:
+                transform_list.append(transforms.Lambda(lambda img: transforms.functional.hflip(img)))
+            if vflip:
+                transform_list.append(transforms.Lambda(lambda img: transforms.functional.vflip(img)))
+        else:
+            if hflip_bool:
+                transform_list.append(transforms.Lambda(lambda img: transforms.functional.hflip(img)))
+            if vflip_bool:
+                transform_list.append(transforms.Lambda(lambda img:transforms.functional.vflip(img)))
     if normalize:
         transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
                                                 (0.5, 0.5, 0.5))]
 
     # print(transform_list)
-    if isLabel and opt.rand_rotate:
-        return transforms.Compose(transform_list), rand_rotate # type: ignore
+    if isLabel:
+        if opt.rand_rotate and not opt.no_flip:
+            return transforms.Compose(transform_list), rand_rotate, hflip, vflip # type: ignore
+        elif opt.rand_rotate:
+            return transforms.Compose(transform_list), rand_rotate
     else:
         return transforms.Compose(transform_list)
 
@@ -133,13 +147,11 @@ def __scale_shortside(img, target_width, method=Image.BICUBIC):
     nw, nh = (ss, ls) if width_is_shorter else (ls, ss)
     return img.resize((nw, nh), method)
 
-
 def __crop(img, pos, size):
     ow, oh = img.size
     x1, y1 = pos
     tw = th = size
     return img.crop((x1, y1, x1 + tw, y1 + th))
-
 
 def __flip(img, flip):
     if flip:
