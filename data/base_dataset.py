@@ -83,9 +83,9 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=T
         transform_list.append(transforms.Resize(osize, interpolation=transforms.InterpolationMode.BICUBIC))   
         # transform_list.append(transforms.Lambda(lambda img: __resize(img, w, h, method)))
 
-    if opt.isTrain and not opt.no_flip:
-        transform_list.append(transforms.Lambda(lambda img: __flip(img, params['flip'])))
-
+    if opt.isTrain and not opt.no_flip: # p -> probability to flip image
+        transform_list.append(transforms.RandomHorizontalFlip(p=0.5))
+        transform_list.append(transforms.RandomVerticalFlip(p=0.5))
     if normalize:
         transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
                                                 (0.5, 0.5, 0.5))]
