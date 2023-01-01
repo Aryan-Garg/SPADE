@@ -14,16 +14,11 @@ import data
 from util.iter_counter import IterationCounter
 from util.visualizer import Visualizer
 
-# Aryan's Custom Imports
-from util.postprocess import PostProcessor
-import fidScore.fid_score as FID
-
 from trainers.pix2pix_trainer import Pix2PixTrainer
 
+# Aryan's Custom Imports
+from util.postprocess import PostProcessor
 import torch 
-
-import torchmetrics
-from torchmetrics.functional import structural_similarity_index_measure
 
 # parse options
 opt = TrainOptions().parse()
@@ -31,9 +26,18 @@ opt = TrainOptions().parse()
 # print options to help debugging
 print(' '.join(sys.argv))
 
-# load the dataset
+# load the training dataset
 dataloader = data.create_dataloader(opt)
-print(f"[+] Len(DataLoader): {len(dataloader)}\n")
+
+### Cheapest Workaround to get val loader 
+# change paths to val dirs
+opt.label_dir = f"datasets/full_pysolar_dataset/full_val_discrete/masks"
+opt.image_dir = f"datasets/full_pysolar_dataset/full_gt_val"
+### 
+
+val_dataloader = data.create_dataloader(opt)
+print(f"[+] Len(Training DataLoader): {len(dataloader)}")
+print(f"[+] Len(Val DataLoader): {len(val_dataloader)}\n")
 
 # create trainer for our model
 trainer = Pix2PixTrainer(opt)
@@ -50,10 +54,8 @@ visualizer = Visualizer(opt)
 #     torch.nn.functional.conv2d(torch.zeros(s, s, s, s, device=dev), torch.zeros(s, s, s, s, device=dev))
 
 # force_cudnn_initialization()
-eval_dict = {'SSIM': [], 'L1': []}
 for epoch in tqdm(iter_counter.training_epochs()):
     iter_counter.record_epoch_start(epoch)
-    ssim_perEpoch, l1_perEpoch = 0., 0.
     for i, data_i in enumerate(dataloader, start=iter_counter.epoch_iter):
         iter_counter.record_one_iteration()
 
@@ -64,35 +66,21 @@ for epoch in tqdm(iter_counter.training_epochs()):
 
         # train discriminator
         trainer.run_discriminator_one_step(data_i)
-        #
-        synImage = trainer.get_latest_generated()
-        # print(synImage.device, synImage.shape, synImage.dtype)
-        reImage = data_i['image'].to(device=synImage.device)
-        
-        # Eval Training
-        ## Compute:
-        currSSIM = structural_similarity_index_measure(synImage, reImage).detach()
-        currL1 = torch.nn.functional.l1_loss(synImage, reImage).detach()
-        ## Accumulate:
-        ssim_perEpoch = ssim_perEpoch + currSSIM
-        l1_perEpoch = l1_perEpoch + currL1
-        
+  
         # Visualizations
         if iter_counter.needs_printing():
             losses = trainer.get_latest_losses()
             pass_eval_dict = {i:torch.Tensor(x) for i,x in eval_dict.items()}
             visualizer.print_current_errors(epoch, iter_counter.epoch_iter,
-                                            dict(losses, **pass_eval_dict), iter_counter.time_per_iter)
-            visualizer.plot_current_errors(dict(losses, **pass_eval_dict), iter_counter.total_steps_so_far)
+                                            losses, iter_counter.time_per_iter)
+            visualizer.plot_current_errors(losses, iter_counter.total_steps_so_far)
 
         if iter_counter.needs_displaying():
             visuals = OrderedDict([('input_label', data_i['label']),
                                    ('synthesized_image', trainer.get_latest_generated()),
                                    ('real_image', data_i['image'])])
-            # TODO:
-            # A. Either use train lag to not save train images OR 
-            # B. set flag --use_html to false                  
-            visualizer.display_current_results(visuals, epoch, iter_counter.total_steps_so_far, train=True)
+            # Use train flag in visualizer.py to not save train images          
+            visualizer.display_current_results(visuals, epoch, iter_counter.total_steps_so_far, train=False)
 
         if iter_counter.needs_saving():
             print('saving the latest model (epoch %d, total_steps %d)' %
@@ -102,16 +90,11 @@ for epoch in tqdm(iter_counter.training_epochs()):
 
     trainer.update_learning_rate(epoch)
     iter_counter.record_epoch_end()
-    
-    # Evaluation: Divide by len of dataloader
-    ssim_perEpoch = ssim_perEpoch / len(dataloader)
-    l1_perEpoch = l1_perEpoch / len(dataloader)
-    ## Save to Dict (for tensorboard vis.):
-    eval_dict['SSIM'].append(ssim_perEpoch)
-    eval_dict['L1'].append(l1_perEpoch)
 
-    print("\n[~] Training (Avg.) Eval Metrics:")
-    print(f"SSIM: {ssim_perEpoch} | L1: {l1_perEpoch}")
+    # TODO: Add Validation code here!
+    # for i, data_i in enumerate(val_dataloader):
+    #     print(f"[Val] i :: {data_i}")
+        
 
     if epoch % opt.save_epoch_freq == 0 or \
        epoch == iter_counter.total_epochs:
@@ -131,12 +114,6 @@ print(f"Histogram Plots Stat: {post_processor_inst.hist_bool}")
 
 # run separator.py file
 os.system(f"python separator.py {opt.name}")
-
-REAL_IMG_PATH=f"checkpoints/{opt.name}/web/images/real"
-FAKE_IMG_PATH=f"checkpoints/{opt.name}/web/images/synth"
-fid_score = FID.compute(path=[REAL_IMG_PATH, FAKE_IMG_PATH])
-with open(f"checkpoints/{opt.name}/fid_score.txt", "a") as f:
-    f.write(f"FID Score: {fid_score}")
 
 # run export_train.sh script --- Don't need training movie
 # os.system(f"./export_train.sh {opt.name}")
