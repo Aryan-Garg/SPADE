@@ -42,7 +42,8 @@ class Visualizer():
 
     # |visuals|: dictionary of images to display or save
     def display_current_results(self, visuals, epoch, step, train=False):
-
+        if train:
+            return
         ## convert tensors to numpy arrays
         visuals = self.convert_visuals_to_numpy(visuals)
                 
@@ -107,17 +108,20 @@ class Visualizer():
             webpage.save()
 
     # errors: dictionary of error labels and values
-    def plot_current_errors(self, errors, step):
+    def plot_current_errors(self, errors, step, val=False):
         if self.tf_log:
             for tag, value in errors.items():
                 # print(f"tag: {tag} | value: {value} | value.dtype: {value.dtype}")
                 value = value.mean().float()
-                summary = self.tf.Summary(value=[self.tf.Summary.Value(tag=tag, simple_value=value)])
+                if val:
+                    summary = self.tf.Summary(value=[self.tf.Summary.Value(tag=f"VAL_{tag}", simple_value=value)])
+                else:
+                    summary = self.tf.Summary(value=[self.tf.Summary.Value(tag=tag, simple_value=value)])
                 self.writer.add_summary(summary, step)
 
     # errors: same format as |errors| of plotCurrentErrors
-    def print_current_errors(self, epoch, i, errors, t):
-        message = '(epoch: %d, iters: %d, time: %.3f) ' % (epoch, i, t)
+    def print_current_errors(self, epoch, i, errors, t, val=False):
+        message = '[Val](epoch: %d, iters: %d, time: %.3f) ' % (epoch, i, t)
         for k, v in errors.items():
             #print(v)
             #if v != 0:

@@ -47,6 +47,10 @@ class Pix2PixTrainer():
         self.optimizer_D.step()
         self.d_losses = d_losses
 
+    def run_val_step(self, data):
+        generated, g_losses, d_losses = self.pix2pix_model(data, mode='inference')
+        return generated, g_losses, d_losses
+
     def get_latest_losses(self):
         return {**self.g_losses, **self.d_losses}
 
