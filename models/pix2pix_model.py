@@ -57,9 +57,8 @@ class Pix2PixModel(torch.nn.Module):
             return mu, logvar
         elif mode == 'inference':
             with torch.no_grad():
-                val_g_loss, generated = self.compute_generator_loss(input_semantics, real_image)
-                val_d_loss = self.compute_discriminator_loss(input_semantics, real_image)
-            return generated, val_g_loss, val_d_loss
+                fake_image, _ = self.generate_fake(input_semantics, real_image)
+            return fake_image
         else:
             raise ValueError("|mode| is invalid")
 
@@ -167,8 +166,7 @@ class Pix2PixModel(torch.nn.Module):
         if self.opt.use_vae:
             G_losses['KLD'] = KLD_loss
 
-        pred_fake, pred_real = self.discriminate(
-            input_semantics, fake_image, real_image)
+        pred_fake, pred_real = self.discriminate(input_semantics, fake_image, real_image)
 
         G_losses['GAN'] = self.criterionGAN(pred_fake, True,
                                             for_discriminator=False)
@@ -232,6 +230,9 @@ class Pix2PixModel(torch.nn.Module):
     # for each fake and real image.
 
     def discriminate(self, input_semantics, fake_image, real_image):
+        print("IS.shape:", input_semantics.shape, input_semantics.dtype, input_semantics.device)
+        print("fake.shape:", fake_image.shape, fake_image.dtype, fake_image.device)
+        print("real.shape:", real_image.shape, real_image.dtype, real_image.device)
         fake_concat = torch.cat([input_semantics, fake_image], dim=1)
         real_concat = torch.cat([input_semantics, real_image], dim=1)
 

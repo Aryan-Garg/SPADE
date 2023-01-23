@@ -5,6 +5,7 @@ Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses
 
 import os
 from collections import OrderedDict
+from tqdm.auto import tqdm
 
 import data
 from options.test_options import TestOptions
@@ -31,11 +32,11 @@ web_dir = os.path.join(opt.results_dir, opt.name, '%s_%s' % (opt.phase, opt.whic
 webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' %
                     (opt.name, opt.phase, opt.which_epoch))
 
-for i, data_i in enumerate(dataloader):
+for i, data_i in enumerate(tqdm(dataloader)):
     if i * opt.batchSize >= opt.how_many:
         break
 
-    generated, g_loss, d_loss = model(data_i, mode='inference')
+    generated = model(data_i, mode='inference')
     img_path = data_i['path']
 
     for b in range(generated.shape[0]):

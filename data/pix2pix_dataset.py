@@ -68,7 +68,7 @@ class Pix2pixDataset(BaseDataset):
     def __getitem__(self, index):
         # Label Image
         label_path = self.label_paths[index]
-
+        # print(label_path)
         if ".exr" in label_path:
             label = self.loadImage(label_path)
             # print(f"label shape: {np.asarray(label).shape}")
@@ -76,6 +76,7 @@ class Pix2pixDataset(BaseDataset):
  
         else: # Goes through this... using png masks to conserve space!
             label = Image.open(label_path)
+            # print(type(label))
 
         params = get_params(self.opt, label.size)
         
@@ -111,7 +112,7 @@ class Pix2pixDataset(BaseDataset):
 
         transform_image = get_transform(self.opt, params, isLabel=False, rotation_angle=rotation_angle, hflip_bool=hflipB, vflip_bool=vflipB)
         image_tensor = transform_image(image)
-
+        # print(image_tensor.shape, image_tensor.dtype, image_tensor.device)
         # if using instance maps
         if self.opt.no_instance:
             instance_tensor = 0

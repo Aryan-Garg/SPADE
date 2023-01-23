@@ -107,6 +107,8 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=False, toTensor=T
             return transforms.Compose(transform_list), rand_rotate, hflip, vflip # type: ignore
         elif opt.rand_rotate:
             return transforms.Compose(transform_list), rand_rotate
+        else: # Pour l'heure de test ;)
+            return transforms.Compose(transform_list)
     else:
         return transforms.Compose(transform_list)
 
