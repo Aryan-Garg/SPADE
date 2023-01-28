@@ -46,11 +46,11 @@ for i, data_i in enumerate(tqdm(dataloader)):
 
 webpage.save()
 
-post_processor_inst = PostProcessor(opt.name, "I", f"{opt.results_dir}/{opt.name}/test_{opt.which_epoch}/images/synthesized_image/")
-print(f"\nNormalization Stat: {post_processor_inst.normalize_bool}")
-print(f"Inv-log2 TM Stat: {post_processor_inst.inverse_tm_bool}")
-print(f"Gamma TM Stat: {post_processor_inst.gamma_tm_bool}")
-print(f"Histogram Stat: {post_processor_inst.hist_bool}")
+# post_processor_inst = PostProcessor(opt.name, "I", f"{opt.results_dir}/{opt.name}/test_{opt.which_epoch}/images/synthesized_image/")
+# print(f"\nNormalization Stat: {post_processor_inst.normalize_bool}")
+# print(f"Inv-log2 TM Stat: {post_processor_inst.inverse_tm_bool}")
+# print(f"Gamma TM Stat: {post_processor_inst.gamma_tm_bool}")
+# print(f"Histogram Stat: {post_processor_inst.hist_bool}")
 
 # call export_test.sh script to export video
-os.system(f"./export_test.sh {opt.results_dir}/{opt.name}/test_{opt.which_epoch}/images/ {opt.results_dir[8:]}")
+# os.system(f"./export_test.sh {opt.results_dir}/{opt.name}/test_{opt.which_epoch}/images/ {opt.results_dir[8:]}")
