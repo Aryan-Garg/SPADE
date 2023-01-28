@@ -48,7 +48,7 @@ class Pix2PixTrainer():
         self.d_losses = d_losses
 
     def run_val_step(self, data):
-        generated, g_losses, d_losses = self.pix2pix_model(data, mode='inference')
+        generated, g_losses, d_losses = self.pix2pix_model(data, mode='val_inference')
         return generated, g_losses, d_losses
 
     def get_latest_losses(self):

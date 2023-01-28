@@ -59,6 +59,11 @@ class Pix2PixModel(torch.nn.Module):
             with torch.no_grad():
                 fake_image, _ = self.generate_fake(input_semantics, real_image)
             return fake_image
+        elif mode == 'val_inference':
+            with torch.no_grad():
+                val_g_loss, generated = self.compute_generator_loss(input_semantics, real_image)
+                val_d_loss = self.compute_discriminator_loss(input_semantics, real_image)
+            return generated, val_g_loss, val_d_loss
         else:
             raise ValueError("|mode| is invalid")
 
@@ -230,9 +235,9 @@ class Pix2PixModel(torch.nn.Module):
     # for each fake and real image.
 
     def discriminate(self, input_semantics, fake_image, real_image):
-        print("IS.shape:", input_semantics.shape, input_semantics.dtype, input_semantics.device)
-        print("fake.shape:", fake_image.shape, fake_image.dtype, fake_image.device)
-        print("real.shape:", real_image.shape, real_image.dtype, real_image.device)
+        # print("IS.shape:", input_semantics.shape, input_semantics.dtype, input_semantics.device)
+        # print("fake.shape:", fake_image.shape, fake_image.dtype, fake_image.device)
+        # print("real.shape:", real_image.shape, real_image.dtype, real_image.device)
         fake_concat = torch.cat([input_semantics, fake_image], dim=1)
         real_concat = torch.cat([input_semantics, real_image], dim=1)
 

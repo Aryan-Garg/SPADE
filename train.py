@@ -41,8 +41,8 @@ visualizer = Visualizer(opt)
 
 ### Cheapest Workaround to get val loader 
 # change paths to val dirs
-opt.label_dir = f"datasets/full_pysolar_dataset/full_val_discrete/masks"
-opt.image_dir = f"datasets/full_pysolar_dataset/full_gt_val"
+opt.label_dir = f"datasets/full_pysolar_split80-10-10/full_discrete_val/masks"
+opt.image_dir = f"datasets/full_pysolar_split80-10-10/full_val"
 ### 
 
 val_dataloader = data.create_dataloader(opt)
@@ -116,7 +116,7 @@ for epoch in tqdm(iter_counter.training_epochs()):
     
     # print(f"Epoch: {epoch} | Val. G_Loss : {total_val_gLoss} | Val. D_Loss : {total_val_dLoss}")
     
-    # If best val error > this_epoch's val error: SAVE
+    # If best val error > this_epoch's val error: SAVE + Periodic saving
     if (best_val_gLoss > total_val_gLoss and best_val_dLoss > total_val_dLoss) or \
         epoch % opt.save_epoch_freq == 0 or \
         epoch == iter_counter.total_epochs:
